@@ -1,15 +1,17 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Navbar } from "./components/Navbar";
-import { Login } from "./pages/Login";
+import Login from "./pages/Login";
 
 function App() {
-
   return (
     <div>
-      <Navbar/>
-      <h1>Hola mundo con React</h1>
-      <Login/>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login/>} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
+
 export default App;
