@@ -1,10 +1,7 @@
 function Login() {
-  
   return (
     <>
-     <div>
-      Pantalla de Login
-     </div>
+      <span>Login</span>
     </>
   );
 }
