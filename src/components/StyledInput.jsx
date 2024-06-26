@@ -8,7 +8,7 @@ function StyledInput({
   BLLabel,
   BRLabel,
   inputRef,
-  textColor
+  textColor,
 }) {
   return (
     <label className="form-control w-full max-w-xs">
@@ -20,7 +20,7 @@ function StyledInput({
         ref={inputRef}
         type={type}
         placeholder={placeholder}
-        className="input input-bordered w-full max-w-xs bg-white focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
+        className="input input-bordered w-full rounded-full max-w-xs bg-white focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
       />
       <div className="label">
         <span className={`text-label-alt ${textColor}`}>{BLLabel}</span>
