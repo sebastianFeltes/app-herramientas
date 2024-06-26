@@ -31,7 +31,7 @@ function StyledInput({
 
 StyledInput.propTypes = {
   placeholder: PropTypes.string,
-  type: PropTypes.string,
+  type: PropTypes.string.isRequired,
   TLLabel: PropTypes.string,
   TRLabel: PropTypes.string,
   BLLabel: PropTypes.string,
