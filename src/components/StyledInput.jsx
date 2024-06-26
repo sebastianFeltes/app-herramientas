@@ -8,12 +8,13 @@ function StyledInput({
   BLLabel,
   BRLabel,
   inputRef,
+  textColor
 }) {
   return (
-    <label className="form-control w-full max-w-xs text-black">
-      <div className="label underline decoration-blue-400">
-        <span className="label-text text-gray-800">{TLLabel}</span>
-        <span className="label-text-alt text-gray-800">{TRLabel}</span>
+    <label className="form-control w-full max-w-xs">
+      <div className="label">
+        <span className={`text-label underline ${textColor}`}>{TLLabel}</span>
+        <span className={`text-label-alt ${textColor}`}>{TRLabel}</span>
       </div>
       <input
         ref={inputRef}
@@ -22,8 +23,8 @@ function StyledInput({
         className="input input-bordered w-full max-w-xs bg-white focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
       />
       <div className="label">
-        <span className="label-text-alt text-gray-800">{BLLabel}</span>
-        <span className="label-text-alt text-gray-800">{BRLabel}</span>
+        <span className={`text-label-alt ${textColor}`}>{BLLabel}</span>
+        <span className={`text-label-alt ${textColor}`}>{BRLabel}</span>
       </div>
     </label>
   );
