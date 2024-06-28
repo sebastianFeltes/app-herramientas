@@ -4,10 +4,11 @@ import StyledInput from "../components/StyledInput";
     function HistorialHerramientas() {
         return (
             <div className="min-h-screen flex flex-col items-center">
-            
              {/* Botones para agregar filtros */}
-            <div>
-                <StyledInput type={"text"} placeholder={"nombre de usuario"} TLLabel={"filtrar por usuario"}/>
+            <div className="filtros-container">
+                <StyledInput textColor={"text-white"} type={"text"} placeholder={"nombre de usuario"} TLLabel={"filtrar por usuario"}/>
+                <StyledInput textColor={"text-white"} type={"text"} placeholder={"nombre de usuario"} TLLabel={"filtrar por herramienta"}/>
+                <StyledInput textColor={"text-white"} type={"text"} placeholder={"nombre de usuario"} TLLabel={"filtrar por fecha"}/>
             </div>
             {/* Paginación  */}
             <div role="tablist" className="tabs tabs-boxed ">
