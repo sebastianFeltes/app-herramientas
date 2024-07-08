@@ -52,7 +52,7 @@ function LectorQr() {
          {/* tabla de herramientas a asignar */}
         <div className="border shadow-md p-2 rounded-lg flex gap-4 flex-col items-center w-1/3">
           <span className="text-blue-700 text-lg font-semibold  underline decoration-blue-400">
-            Herramientas a <span className="text-green-500">asignar</span>
+            Herramientas a asignar
           </span>
           <table className="table">
             <thead className="text-blue-400">
