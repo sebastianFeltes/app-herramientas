@@ -5,7 +5,7 @@ function AltaHerramientas() {
   return (
     <>
       <div className="bg-white h-screen flex flex-col justify-center items-center">
-        <h1 className="text-black font-bold text-3xl mb-5 ">
+        <h1 className="text-black font-bold text-3xl mb-2">
           Alta de herramientas
         </h1>
         <form
@@ -29,16 +29,16 @@ function AltaHerramientas() {
             </label>
             <select
               placeholder="Seleccione una categoría"
-              className="select input-bordered w-full max-w-xs px-4 bg-white text-base  focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
+              className="select input-bordered w-full max-w-xs px-4 bg-white text-black focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
             >
-              <option disabled selected className="">
+              <option disabled selected>
                 Seleccione una categoría
               </option>
-              <option>Homer</option>
-              <option>Marge</option>
-              <option>Bart</option>
-              <option>Lisa</option>
-              <option>Maggie</option>
+              <option className="text-black">Categoría 1</option>
+              <option className="text-black">Categoría 2</option>
+              <option className="text-black">Categoría 3</option>
+              <option className="text-black">Categoría 4</option>
+              <option className="text-black">Categoría 5</option>
             </select>
           </div>
 
