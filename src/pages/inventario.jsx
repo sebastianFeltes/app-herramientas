@@ -1,4 +1,5 @@
 import React from "react";
+import StyledButton from "../components/StyledButton";
 import StyledInput from "../components/StyledInput";
 
 function Inventario() {
@@ -37,6 +38,7 @@ function Inventario() {
                     <th>Categoria</th>
                     <th>Nro Serie</th>
                     <th>Estado</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -48,6 +50,13 @@ function Inventario() {
                     <td>Manual</td>
                     <td>65484</td>
                     <td>Bueno</td>
+                    <td>
+                      <StyledButton
+                        innerText={"Editar"}
+                        btnType="submit"
+                        accept
+                      />
+                    </td>
                   </tr>
                 </tbody>
               </table>
