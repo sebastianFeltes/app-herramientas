@@ -1,23 +1,29 @@
 import StyledInput from "../components/StyledInput";
 import StyledButton from "../components/StyledButton";
+import Navbar from "../components/Navbar";
 
 function AltaHerramientas() {
+  const [data, setData] = useState(undefined);
+
   return (
     <>
-      <div className="bg-white h-screen flex flex-col justify-center items-center">
+      <div className="bg-white h-screen flex flex-col justify-center items-center overflow-scroll">
         <h1 className="text-black font-bold text-3xl mb-2">
           Alta de herramientas
         </h1>
         <form
           className="bg-white shadow-2xl shadow-black rounded-lg pb-3 pt-5 px-16 grid grid-rows-5 grid-flow-col gap-x-20 justify-evenly items-center"
           action=""
+          onSubmit={(e) => enviarDatos(e)}
         >
           <StyledInput
+            inputRef={nombreHerramienta}
             placeholder={"Ingrese el nombre"}
             type={"text"}
             TLLabel={"Nombre"}
           />
           <StyledInput
+            inputRef={marcaHerramienta}
             placeholder={"Ingrese la marca"}
             type={"text"}
             TLLabel={"Marca"}
@@ -68,7 +74,7 @@ function AltaHerramientas() {
             type={"date"}
             TLLabel={"Fecha de carga"}
           />
-          <StyledButton remove btnType={"submit"} innerText={"Cancelar"} />
+          <StyledButton remove btnType={"reset"} innerText={"Cancelar"} />
         </form>
       </div>
     </>

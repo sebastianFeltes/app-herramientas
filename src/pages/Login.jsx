@@ -4,8 +4,8 @@ function Login() {
 
   return (
     <>
-    <Navbar/>
-    <span>Login</span>
+      <Navbar />
+      <span>Login</span>
     </>
   );
 }
