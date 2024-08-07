@@ -8,6 +8,7 @@ function StyledInput({
   BLLabel,
   BRLabel,
   inputRef,
+  // eslint-disable-next-line react/prop-types
   textColor,
 }) {
   return (
