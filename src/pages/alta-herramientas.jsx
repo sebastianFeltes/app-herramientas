@@ -88,10 +88,10 @@ function AltaHerramientas() {
                     ${consumible ? "w-full" : "w-full"}`}
                 >
                   <option value={undefined}>Seleccione una categoría</option>
-                  <option value={"cat1"} className="text-black">
+                  <option value={"categoria 1"} className="text-black">
                     Categoría 1
                   </option>
-                  <option value={"cat2"} className="text-black">
+                  <option value={"categoria 2"} className="text-black">
                     Categoría 2
                   </option>
                   <option value={"consumible"} className="text-black">
@@ -143,13 +143,13 @@ function AltaHerramientas() {
                 className="input  input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none w-full"
               >
                 <option value={undefined}>Seleccione un estado</option>
-                <option value={"Cat 1"} className="text-black">
+                <option value={"Nuevo"} className="text-black">
                   Nuevo
                 </option>
-                <option value={"Cat 2"} className="text-black">
+                <option value={"Usado"} className="text-black">
                   Usado
                 </option>
-                <option value={"Cat 3"} className="text-black">
+                <option value={"Dañado"} className="text-black">
                   Dañado
                 </option>
               </select>
