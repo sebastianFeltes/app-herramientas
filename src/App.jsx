@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import AltaHerramientas from "./pages/alta-herramientas";
 import LectorQr from "./pages/lector-qr";
 import Home from "./pages/home";
+import EditHerramientas from "./pages/editar-herramientas";
 
 function App() {
   return (
@@ -15,6 +16,16 @@ function App() {
         <Route path="/alta-herramientas" element={<AltaHerramientas />} />
         <Route path="/inventario" element={<Inventario />} />
         <Route path="/lector-qr" element={<LectorQr />} />
+        <Route path="/editar-herramientas" element={<EditHerramientas defaultValues={{nombre: "martillo",
+    marca: "pepi",
+    categoria: "manual",
+    numSerie: "154",
+    fechaCompra: "6/8/2024",
+    origenHerramienta: "donado",
+    estadoHerramienta: "optima",
+    vidaUtil: "2y",
+    cantidad: "3",}} />} />
+        
       </Routes>
     </BrowserRouter>
   );
