@@ -18,7 +18,7 @@ export async function postAltaHerramienta(herramienta) {
     return console.log("Ingrese la fecha de compra de la herramienta");
   }
 
-  if (herramienta.estadoHerramienta == "Estado de la herramienta") {
+  if (herramienta.estadoHerramienta == "Seleccione un estado") {
     return console.log("Ingrese el estado de la herramienta");
   }
   if (!herramienta.fechaCarga) {
