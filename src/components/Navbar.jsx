@@ -23,11 +23,7 @@ function Navbar() {
             </li>
             <li>
               <Link to={"/historial-herramientas"}>
-                <StyledButton
-                  link
-                  innerText={"Historial"}
-                  btnType={"sumbit"}
-                />
+                <StyledButton link innerText={"Historial"} btnType={"sumbit"} />
               </Link>
             </li>
             <li>
@@ -41,15 +37,11 @@ function Navbar() {
             </li>
             <li>
               <Link to={"/lector-qr"}>
-                <StyledButton
-                  link
-                  innerText={"Lector QR"}
-                  btnType={"sumbit"}
-                />
+                <StyledButton link innerText={"Lector QR"} btnType={"sumbit"} />
               </Link>
             </li>
-            
-            { /* <li>
+
+            {/* <li>
               <details>
                 <summary>Parent</summary>
                 <ul className="bg-base-100 rounded-t-none p-2">
