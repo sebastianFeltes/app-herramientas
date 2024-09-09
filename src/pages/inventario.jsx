@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import StyledButton from "../components/StyledButton";
 import StyledInput from "../components/StyledInput";
+import { get } from "../services/utils.services";
 
 function Inventario() {
+  const [inventario, setInventario] = useState(undefined);
+
+  async function obtenerInventario() {
+    const data = await get("/inventario");
+    setInventario(data);
+  }
+
   return (
     <div className="hero bg-white min-h-screen w-full">
       <div className=" m-0 p-0 w-full">
