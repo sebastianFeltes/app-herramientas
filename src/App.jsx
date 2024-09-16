@@ -11,7 +11,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/home" element={<Home />} />
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/alta-herramientas" element={<AltaHerramientas />} />
         <Route path="/inventario" element={<Inventario />} />
         <Route path="/lector-qr" element={<LectorQr />} />
