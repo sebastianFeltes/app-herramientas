@@ -7,7 +7,8 @@ function App() {  return (
         <Routes>
           <Route path="/" element={<Login/>} />
           <Route path="/historial-herramientas" element={<HistorialHerramientas/>} />
-        </Routes>      </BrowserRouter>
+        </Routes>     
+      </BrowserRouter>
   );
 }
 

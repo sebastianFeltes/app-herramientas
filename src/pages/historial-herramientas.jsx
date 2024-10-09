@@ -1,12 +1,13 @@
+import Navbar from "../components/Navbar";
 import StyledInput from "../components/StyledInput";
 
     
     function HistorialHerramientas() {
-        return (
-            <div className="bg-white min-h-screen flex flex-col items-center ">
-             {/* Botones para agregar filtros */}
+       return (
+        <> <Navbar/>
+        <div className="bg-white min-h-screen flex flex-col items-center ">
             <div className=" filtros-container gap-9 mb-3 flex w-25 ">
-                <StyledInput  textColor={"text-black"} type={"text"} placeholder={"filtrar por usuario"} />
+                <StyledInput textColor={"text-black"} type={"text"} placeholder={"filtrar por usuario"} />
                 <StyledInput textColor={"text-black"} type={"text"} placeholder={"filtrar por herramienta"} />
                 <StyledInput textColor={"text-black"} type={"text"} placeholder={"filtrar por fecha"} />
             </div>
@@ -65,7 +66,9 @@ import StyledInput from "../components/StyledInput";
                 </tbody>
               </table>
               </div>
-          </div>
+        
+        </div>
+        </>
         );
       }
   
