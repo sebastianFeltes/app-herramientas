@@ -1,13 +1,19 @@
 import { useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import StyledInput from "../components/StyledInput";
-import { getHerramientasUso } from "../services/lector-qr.services";
+import {
+  getHerramienta,
+  getHerramientasUso,
+  postHerramientasAAsignar,
+  returnHerramienta,
+} from "../services/lector-qr.services";
 
 function LectorQr() {
   const code = useRef();
   const [herramientasAsignadas, setHerramientasAsignadas] = useState([]);
   const [paso, setPaso] = useState(1);
   const [herramientasAAsignar, setHerramientasAAsignar] = useState([]);
+  const [alumno, setAlumno] = useState(null);
   async function LecturaQr() {
     let codigo = code.current.value;
     let cadena = codigo.split("");
@@ -15,37 +21,76 @@ function LectorQr() {
     if (cadena[cadena.length - 1] == "." && paso == 1) {
       cadena.pop();
       let idAlumno = parseInt(cadena.join(""));
+      setAlumno(idAlumno);
       const res = await getHerramientasUso(idAlumno);
-      console.log(res);
       setHerramientasAsignadas(res);
       setPaso(2);
     }
+
     //Se fija si el ultimo elemento del array es "_" y si es trae los datos
     if (cadena[cadena.length - 1] == "_" && paso == 2) {
       cadena.pop();
       let idHerramienta = parseInt(cadena.join(""));
-      console.log(idHerramienta);
       //Si la herramienta está, entonces la devuelve
       if (
         herramientasAsignadas.some(
           (herramienta) => idHerramienta == herramienta.id_herramienta
         )
       ) {
-        console.log("está");
         let nuevasHerramientasAsignadas = herramientasAsignadas.filter(
           (herramienta) => idHerramienta != herramienta.id_herramienta
         );
-        setHerramientasAsignadas(nuevasHerramientasAsignadas)
+        let response = await returnHerramienta({
+          id_alumno: alumno,
+          id_herramienta: idHerramienta,
+        });
+        console.log(response);
+
+        return setHerramientasAsignadas(nuevasHerramientasAsignadas);
       } else {
-        console.log();
-        
+        let isAssigned = herramientasAAsignar.some(
+          (herramienta) => idHerramienta == herramienta.id_herramienta
+        );
+        if (isAssigned) {
+          return console.log("ya está asignada");
+        }
+        const response = await getHerramienta(idHerramienta);
+        //Valida si response recibe herramientas
+        if (response.length > 0) {
+          return setHerramientasAAsignar([
+            ...herramientasAAsignar,
+            response[0],
+          ]);
+        } else {
+          return console.log("No se encontró la herramienta");
+        }
+      }
+    }
+    //Cierre del ciclo
+    if (cadena[cadena.length - 1] == "." && paso == 2) {
+      let alumnoActual = parseInt(cadena.join(""));
+      console.log(alumno);
+      console.log(alumnoActual);
+
+      if (alumnoActual != alumno) {
+        console.log("alumno distinto");
+      } else {
+        let response = await postHerramientasAAsignar({
+          id_alumno: alumno,
+          herramientas: herramientasAAsignar,
+        });
+        setPaso(1);
+        setHerramientasAsignadas([]);
+        setHerramientasAAsignar([]);
+        setAlumno(null);
+        console.log(herramientasAsignadas);
+        console.log(herramientasAAsignar);
       }
     }
 
     // code.current.value = ""
   }
-  console.log(herramientasAsignadas);
-  
+
   return (
     /* body */
     <>
@@ -115,17 +160,21 @@ function LectorQr() {
             <table className="table">
               <thead className="text-blue-400">
                 <tr>
-                  <th>Nombre</th>
-                  <th>Marca</th>
-                  <th>Categoría</th>
+                  <td>Marca</td>
+                  <td>Nombre</td>
+                  <td>Nro serie</td>
                 </tr>
               </thead>
               <tbody className="text-black font-semibold">
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
+                {herramientasAAsignar.length > 0
+                  ? herramientasAAsignar.map((herramienta, index) => (
+                      <tr key={index}>
+                        <td>{herramienta.marca}</td>
+                        <td>{herramienta.nombre}</td>
+                        <td>{herramienta.nro_serie}</td>
+                      </tr>
+                    ))
+                  : false}
               </tbody>
             </table>
           </div>
