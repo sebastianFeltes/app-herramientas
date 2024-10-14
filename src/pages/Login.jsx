@@ -3,8 +3,6 @@ import StyledButton from "../components/StyledButton";
 import StyledInput from "../components/StyledInput";
 import Logo from "../assets/logo-cfl.png";
 
-
-
 function Login() {
   return (
     <div className="hero bg-[#132852] min-h-screen">
