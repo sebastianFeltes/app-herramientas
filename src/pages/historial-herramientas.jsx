@@ -1,9 +1,22 @@
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import StyledInput from "../components/StyledInput";
-
+import { getHistorialHerramientas } from "../services/historial-herramientas.service";
     
     function HistorialHerramientas() {
-       return (
+       const [herramientas , setHerramientas] = useState([]);
+       async function obtenerHerramientas () {
+          const res =await getHistorialHerramientas();
+        console.log(res);
+        
+          setHerramientas(res)  
+       } 
+
+       useEffect(()=>{
+        obtenerHerramientas()
+       } ,[])
+       
+      return (
         <> <Navbar/>
         <div className="bg-white min-h-screen flex flex-col items-center ">
             <div className=" filtros-container gap-9 mb-3 flex w-25 ">
@@ -33,36 +46,15 @@ import StyledInput from "../components/StyledInput";
                   </tr>
                 </thead>
                 <tbody>
-                  {/* fila 1 */}
-                  <tr>
-                    <th >1</th>
-                    <td >Cy Ganderton</td>
-                    <td >Quality Control Specialist</td>
-                    <td>prestada</td>
-                    <td >3-03-2024</td>
-                    <td>17:32</td>
-                    <td >Rippio</td>
-                  </tr>
-                  {/* fila 2 */}
-                  <tr>
-                    <th >2</th>
-                    <td >Jorge</td>
-                    <td >Martillo</td>
-                    <td>prestada</td>
-                    <td >10-06-2024</td>
-                    <td>19:23</td>
-                    <td >Vive</td>
-                  </tr>
-                  {/*fila 3*/}
-                  <tr>
-                    <th >1</th>
-                    <td >Cy Ganderton</td>
-                    <td >rusa</td>
-                    <td>devuelta</td>
-                    <td >3-03-2024</td>
-                    <td>17:32</td>
-                    <td >Rippio</td>
-                  </tr>
+                 {herramientas.map((herramienta, index)=>(<tr key={index}>
+                  <td>{herramienta.id_herramienta}</td>
+                  <td>{herramienta.nombre_alumno} {herramienta.apellido_alumno}</td>
+                  <td>{herramienta.nombre_herramienta} </td>
+                  <td>{herramienta.movimiento} </td>
+                  <td>{herramienta.fecha} </td>
+                  <td>{herramienta.hora} </td>
+                  <td>{herramienta.estado} </td>
+                 </tr>))}
                 </tbody>
               </table>
               </div>
