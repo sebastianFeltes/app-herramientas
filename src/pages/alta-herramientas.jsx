@@ -99,15 +99,12 @@ function AltaHerramientas() {
       <Navbar />
       <ModalMessage text={error || success} error={error ? true : false} />
       <div className="bg-white h-min-screen flex flex-col justify-center items-center w-full">
-        <h1 className="text-black font-bold text-3xl mb-2">
-          Alta de herramientas
-        </h1>
         <form
           onReset={(e) => {
             e.target.reset();
           }}
           onSubmit={(e) => enviarDatos(e)}
-          className="w-3/4 bg-white shadow-2xl shadow-black rounded-lg pb-5 pt-5 px-16 mb-8 flex flex-col items-center"
+          className="w-3/4 bg-white shadow-2xl shadow-black rounded-lg py-5 px-16 my-8 flex flex-col items-center"
           action=""
         >
           <div className="w-full flex flex-row justify-evenly items-center">
@@ -174,7 +171,7 @@ function AltaHerramientas() {
               </div>
               <StyledInput
                 placeholder={"Ingrese el núm. de serie"}
-                type={"number"}
+                type={"text"}
                 TLLabel={"Número de serie"}
                 inputRef={numSerie}
                 textColor={"text-black"}
@@ -214,8 +211,8 @@ function AltaHerramientas() {
                 </select>
               </div>
               <StyledInput
-                placeholder={"Ingrese la vida útil"}
-                type={"text"}
+                placeholder={"Ingrese la vida útil en años"}
+                type={"number"}
                 TLLabel={"Vida útil de la herramienta"}
                 inputRef={vidaUtil}
                 textColor={"text-black"}
