@@ -1,47 +1,43 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo-cfl.png";
 import StyledButton from "./StyledButton";
+import { useLocation } from "react-router-dom";
 function Navbar() {
   return (
-    <div>
-      <div className="navbar bg-blue-700">
-        <div className="flex-1">
-          <Link to={"/home"} className="w-16">
-            <img className="w-full" src={logo} alt="" />
-          </Link>
-        </div>
-        <div className="flex-none">
-          <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link to={"/inventario"}>
-                <StyledButton
-                  link
-                  innerText={"Inventario"}
-                  btnType={"sumbit"}
-                />
-              </Link>
-            </li>
-            <li>
-              <Link to={"/historial-herramientas"}>
-                <StyledButton link innerText={"Historial"} btnType={"sumbit"} />
-              </Link>
-            </li>
-            <li>
-              <Link to={"/alta-herramientas"}>
-                <StyledButton
-                  link
-                  innerText={"Alta Herramientas"}
-                  btnType={"sumbit"}
-                />
-              </Link>
-            </li>
-            <li>
-              <Link to={"/lector-qr"}>
-                <StyledButton link innerText={"Lector QR"} btnType={"sumbit"} />
-              </Link>
-            </li>
+    <div className="navbar bg-blue-700 sticky top-0 z-50">
+      <div className="flex-1">
+        <Link to={"/home"} className="w-16">
+          <img className="w-full" src={logo} alt="" />
+        </Link>
+      </div>
+      <div className="flex-none">
+        <ul className="menu menu-horizontal px-1">
+          <li>
+            <Link to={"/inventario"}>
+              <StyledButton link innerText={"Inventario"} btnType={"sumbit"} />
+            </Link>
+          </li>
+          <li>
+            <Link to={"/historial-herramientas"}>
+              <StyledButton link innerText={"Historial"} btnType={"sumbit"} />
+            </Link>
+          </li>
+          <li>
+            <Link to={"/alta-herramientas"}>
+              <StyledButton
+                link
+                innerText={"Alta Herramientas"}
+                btnType={"sumbit"}
+              />
+            </Link>
+          </li>
+          <li>
+            <Link to={"/lector-qr"}>
+              <StyledButton link innerText={"Lector QR"} btnType={"sumbit"} />
+            </Link>
+          </li>
 
-            {/* <li>
+          {/* <li>
               <details>
                 <summary>Parent</summary>
                 <ul className="bg-base-100 rounded-t-none p-2">
@@ -54,8 +50,7 @@ function Navbar() {
                 </ul>
               </details>
             </li> */}
-          </ul>
-        </div>
+        </ul>
       </div>
     </div>
   );

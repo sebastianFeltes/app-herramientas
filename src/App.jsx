@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Inventario from "./pages/inventario";
 import Login from "./pages/Login";
-<<<<<<<<< Temporary merge branch 1
 import HistorialHerramientas from "./pages/historial-herramientas";
 
 import AltaHerramientas from "./pages/alta-herramientas";
@@ -18,6 +17,7 @@ function App() {
         <Route path="/alta-herramientas" element={<AltaHerramientas />} />
         <Route path="/inventario" element={<Inventario />} />
         <Route path="/lector-qr" element={<LectorQr />} />
+        <Route path="/historial-herramientas" element={<HistorialHerramientas />} />
       </Routes>
     </BrowserRouter>
   );
