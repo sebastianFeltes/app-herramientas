@@ -20,15 +20,7 @@ import { getHistorialHerramientas } from "../services/historial-herramientas.ser
         <> <Navbar/>
         <div className="bg-white min-h-screen flex flex-col items-center ">
             <div className=" filtros-container gap-9 mb-3 flex w-25 ">
-                <StyledInput textColor={"text-black"} type={"text"} placeholder={"filtrar por usuario"} />
-                <StyledInput textColor={"text-black"} type={"text"} placeholder={"filtrar por herramienta"} />
-                <StyledInput textColor={"text-black"} type={"text"} placeholder={"filtrar por fecha"} />
-            </div>
-            {/* Paginación  */}
-            <div role="tablist" className="tabs tabs-boxed bg-gray-700 text-black">
-              <a role="tab" className="tab">Tab 1</a>
-              <a role="tab" className="tab tab-active">Tab 2</a>
-              <a role="tab" className="tab">Tab 3</a>
+                <StyledInput textColor={"text-black"} type={"text"} placeholder={"Aplicar filtros"} />
             </div>
             {/* Contenedor de la tabla */}
             <div className="flex-grow justify-center w-full mb-10 mt-4">
@@ -36,18 +28,16 @@ import { getHistorialHerramientas } from "../services/historial-herramientas.ser
                 {/* cabecera */}
                 <thead className="text-gray-700 bg-gray-300 ">
                   <tr >
-                    <th ></th>
-                    <th >Usuario</th>
-                    <th >Herramienta</th>
-                    <th>movimiento</th>
-                    <th >Fecha</th>
-                    <th>Hora</th>
-                    <th >Estado de herramienta</th>
+                    <th >USUARIO</th>
+                    <th >HERRAMIENTA</th>
+                    <th>MOVIMIENTO</th>
+                    <th >FECHA</th>
+                    <th>HORA</th>
+                    <th >ESTADO DE HERRAMIENTA</th>
                   </tr>
                 </thead>
                 <tbody>
-                 {herramientas.map((herramienta, index)=>(<tr key={index}>
-                  <td>{herramienta.id_herramienta}</td>
+                 {herramientas.map((herramienta, index)=>(<tr key={index}>           
                   <td>{herramienta.nombre_alumno} {herramienta.apellido_alumno}</td>
                   <td>{herramienta.nombre_herramienta} </td>
                   <td>{herramienta.movimiento} </td>
