@@ -14,6 +14,7 @@ function LectorQr() {
   const [paso, setPaso] = useState(1);
   const [herramientasAAsignar, setHerramientasAAsignar] = useState([]);
   const [alumno, setAlumno] = useState(null);
+
   async function LecturaQr() {
     let codigo = code.current.value;
     let cadena = codigo.split("");
@@ -25,6 +26,7 @@ function LectorQr() {
       const res = await getHerramientasUso(idAlumno);
       setHerramientasAsignadas(res);
       setPaso(2);
+      code.current.value = "";
     }
 
     //Se fija si el ultimo elemento del array es "_" y si es trae los datos
@@ -46,25 +48,23 @@ function LectorQr() {
         });
         console.log(response);
 
-        return setHerramientasAsignadas(nuevasHerramientasAsignadas);
+        setHerramientasAsignadas(nuevasHerramientasAsignadas);
       } else {
         let isAssigned = herramientasAAsignar.some(
           (herramienta) => idHerramienta == herramienta.id_herramienta
         );
         if (isAssigned) {
-          return console.log("ya está asignada");
+          console.log("ya está asignada");
         }
         const response = await getHerramienta(idHerramienta);
         //Valida si response recibe herramientas
         if (response.length > 0) {
-          return setHerramientasAAsignar([
-            ...herramientasAAsignar,
-            response[0],
-          ]);
+          setHerramientasAAsignar([...herramientasAAsignar, response[0]]);
         } else {
-          return console.log("No se encontró la herramienta");
+          console.log("No se encontró la herramienta");
         }
       }
+      code.current.value = "";
     }
     //Cierre del ciclo
     if (cadena[cadena.length - 1] == "." && paso == 2) {
@@ -86,9 +86,9 @@ function LectorQr() {
         console.log(herramientasAsignadas);
         console.log(herramientasAAsignar);
       }
+      code.current.value = "";
     }
-
-    // code.current.value = ""
+    //resetear el input
   }
 
   return (
