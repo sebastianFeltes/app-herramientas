@@ -19,6 +19,7 @@ function AltaHerramientas() {
   const [success, setSuccess] = useState(undefined);
 
   const [idDocente, setIdDocente] = useState(null);
+
   /* //CREO EL ESTADO consumible PARA PODER IR AUMENTANDOLO
   const [consumible, setConsumible] = useState(false); */
 
@@ -51,7 +52,9 @@ function AltaHerramientas() {
   useEffect(() => {
     obtenerCategorias();
     obtenerEstados();
-    console.log(localStorage);
+    // traigo el id del docente que carga la herr desde el localStorage
+    localStorage.getItem("idDocente") &&
+      setIdDocente(parseInt(localStorage.getItem("idDocente")));
   }, []);
 
   //FUNCIÓN QUE SE EJECUTA CUANDO HAGO EL SUBMIT
@@ -69,7 +72,9 @@ function AltaHerramientas() {
       origenHerramienta: origenHerramienta.current.value,
       estadoHerramienta: parseInt(estadoHerramienta.current.value),
       fechaCarga: new Date().toLocaleDateString(),
+      horaCarga: new Date().toLocaleTimeString(),
       vidaUtil: vidaUtil.current.value,
+      idDocente: idDocente,
     };
 
     let res = await postAltaHerramienta(nuevaHerramienta);
