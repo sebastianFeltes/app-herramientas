@@ -31,6 +31,8 @@ function Login() {
         localStorage.setItem("nombreUsuario", data.nombre);
         localStorage.setItem("apellidoUsuario", data.apellido);
         localStorage.setItem("dniUsuario", data.dni);
+        localStorage.setItem("idDocente", data.id_docente);
+
         setErrorMessage("");
         // Redirige al usuario a /home
         navigate("/home");

@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo-cfl.png";
 import StyledButton from "./StyledButton";
 import { useState } from "react";
+
 
 const links = [
   {
@@ -26,10 +27,11 @@ function Navbar() {
   const nombreUs = localStorage.getItem("nombreUsuario").split("")[0];
   const apellidoUs = localStorage.getItem("apellidoUsuario").split("")[0];
   console.log(nombreUs, apellidoUs);
+  const location = useLocation()
 
   return (
-    <div>
-      <div className="navbar bg-blue-700">
+    
+      <div className="navbar bg-blue-700 sticky top-0 z-50">
         <div className="flex-1">
           <Link to={"/home"} className="w-16">
             <img className="w-full" src={logo} alt="" />
@@ -103,7 +105,7 @@ function Navbar() {
           </ul>
         </div>
       </div>
-    </div>
+    
   );
 }
 
