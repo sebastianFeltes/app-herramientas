@@ -10,12 +10,11 @@ import {
 import ModalMessage from "../components/ModalMessage";
 
 function AltaHerramientas() {
-  //CREO EL ESTADO categorias QUE SE VA A LLENAR CON LAS CATEGORÍAS QUE VENGAN DE LA DB
+  //CREO LOS ESTADOS categorias Y estados QUE SE VA A LLENAR CON LOS DATOS QUE VENGAN DE LA DB
   const [categorias, setCategorias] = useState([]);
-
-  //CREO EL ESTADO estados QUE SE VA A LLENAR CON LOS ESTADOS QUE VENGAN DE LA DB
   const [estados, setEstados] = useState([]);
 
+  // ESTADOS PARA MOSTRAR EL MODAL UNA VEZ QUE CARGO LA HERRAMIENTA
   const [error, setError] = useState(undefined);
   const [success, setSuccess] = useState(undefined);
 
@@ -51,6 +50,7 @@ function AltaHerramientas() {
   useEffect(() => {
     obtenerCategorias();
     obtenerEstados();
+    console.log(localStorage);
   }, []);
 
   //FUNCIÓN QUE SE EJECUTA CUANDO HAGO EL SUBMIT
