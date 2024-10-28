@@ -9,6 +9,8 @@ function StyledInput({
   BRLabel,
   inputRef,
   // eslint-disable-next-line react/prop-types
+  onChange,
+  // eslint-disable-next-line react/prop-types
   textColor,
 }) {
   return (
@@ -22,6 +24,7 @@ function StyledInput({
         type={type}
         placeholder={placeholder}
         className="input input-bordered w-full rounded-full max-w-xs bg-white focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
+        onChange={onChange}
       />
       <div className="label">
         <span className={`text-label-alt ${textColor}`}>{BLLabel}</span>
@@ -38,7 +41,7 @@ StyledInput.propTypes = {
   TRLabel: PropTypes.string,
   BLLabel: PropTypes.string,
   BRLabel: PropTypes.string,
-  inputRef: PropTypes.object,
+  inputRef: PropTypes.object
 };
 
 export default StyledInput;

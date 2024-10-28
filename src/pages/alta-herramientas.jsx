@@ -18,6 +18,7 @@ function AltaHerramientas() {
   const [error, setError] = useState(undefined);
   const [success, setSuccess] = useState(undefined);
 
+  const [idDocente, setIdDocente] = useState(null);
   /* //CREO EL ESTADO consumible PARA PODER IR AUMENTANDOLO
   const [consumible, setConsumible] = useState(false); */
 
