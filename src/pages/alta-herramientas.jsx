@@ -10,16 +10,16 @@ import {
 import ModalMessage from "../components/ModalMessage";
 
 function AltaHerramientas() {
-  //CREO EL ESTADO categorias QUE SE VA A LLENAR CON LAS CATEGORÍAS QUE VENGAN DE LA DB
+  //CREO LOS ESTADOS categorias Y estados QUE SE VA A LLENAR CON LOS DATOS QUE VENGAN DE LA DB
   const [categorias, setCategorias] = useState([]);
-
-  //CREO EL ESTADO estados QUE SE VA A LLENAR CON LOS ESTADOS QUE VENGAN DE LA DB
   const [estados, setEstados] = useState([]);
 
+  // ESTADOS PARA MOSTRAR EL MODAL UNA VEZ QUE CARGO LA HERRAMIENTA
   const [error, setError] = useState(undefined);
   const [success, setSuccess] = useState(undefined);
 
   const [idDocente, setIdDocente] = useState(null);
+
   /* //CREO EL ESTADO consumible PARA PODER IR AUMENTANDOLO
   const [consumible, setConsumible] = useState(false); */
 
@@ -52,6 +52,9 @@ function AltaHerramientas() {
   useEffect(() => {
     obtenerCategorias();
     obtenerEstados();
+    // traigo el id del docente que carga la herr desde el localStorage
+    localStorage.getItem("idDocente") &&
+      setIdDocente(parseInt(localStorage.getItem("idDocente")));
   }, []);
 
   //FUNCIÓN QUE SE EJECUTA CUANDO HAGO EL SUBMIT
@@ -69,7 +72,9 @@ function AltaHerramientas() {
       origenHerramienta: origenHerramienta.current.value,
       estadoHerramienta: parseInt(estadoHerramienta.current.value),
       fechaCarga: new Date().toLocaleDateString(),
+      horaCarga: new Date().toLocaleTimeString(),
       vidaUtil: vidaUtil.current.value,
+      idDocente: idDocente,
     };
 
     let res = await postAltaHerramienta(nuevaHerramienta);
