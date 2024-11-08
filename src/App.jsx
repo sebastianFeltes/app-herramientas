@@ -16,15 +16,7 @@ function App() {
         <Route path="/alta-herramientas" element={<AltaHerramientas />} />
         <Route path="/inventario" element={<Inventario />} />
         <Route path="/lector-qr" element={<LectorQr />} />
-        <Route path="/editar-herramientas" element={<EditHerramientas defaultValues={{nombre: "martillo",
-    marca: "pepi",
-    categoria: "manual",
-    numSerie: "154",
-    fechaCompra: "6/8/2024",
-    origenHerramienta: "donado",
-    estadoHerramienta: "optima",
-    vidaUtil: "2y",
-    cantidad: "3",}} />} />
+        <Route path="/editar-herramientas" element={<EditHerramientas />} />
         
       </Routes>
     </BrowserRouter>

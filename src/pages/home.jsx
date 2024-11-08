@@ -9,7 +9,7 @@ function Home() {
           <h2 className="text-black text-3xl">Bienvenido Usuario!</h2>
           <Link
             to={"/alta-herramientas"}
-            className="tooltip"
+            className="tooltip tooltip-primary"
             data-tip="Cargar Herramienta"
           >
             {/* <button className="btn tooltip tooltip-right bg-blue-600" data-tip="Click">Alta Herramienta</button> */}
@@ -17,19 +17,19 @@ function Home() {
           </Link>
           <Link
             to={"/inventario"}
-            className="tooltip"
+            className="tooltip tooltip-primary"
             data-tip="Visualizar inventario"
           >
             <StyledButton innerText={"Inventario"} link />
           </Link>
           <Link
             to={"/historial-herramientas"}
-            className="tooltip"
+            className="tooltip tooltip-primary"
             data-tip="Revisar Historial"
           >
             <StyledButton innerText={"Historial"} link />
           </Link>
-          <Link to={"/lector-qr"} className="tooltip" data-tip="QR Gestion">
+          <Link to={"/lector-qr"} className="tooltip tooltip-primary " data-tip="QR Gestion">
             <StyledButton innerText={"Gestion QR"} link />
           </Link>
         </div>

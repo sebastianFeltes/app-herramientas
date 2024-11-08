@@ -1,22 +1,23 @@
 import StyledInput from "../components/StyledInput";
 import StyledButton from "../components/StyledButton";
 import Navbar from "../components/Navbar";
-import { useRef,useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ObtenerDatosHerramienta } from "../services/editar-herramienta.services";
 // import { putEditHerramienta } from "../services/alta-herramientas.services";
 
-function EditHerramientas({ defaultValues }) {
-  const {
-    nombre,
-    marca,
-    categoria,
-    numSerie,
-    fechaCompra,
-    origenHerramienta,
-    estadoHerramienta,
-    vidaUtil,
-    cantidad,
-  } = defaultValues;
-
+function EditHerramientas() {
+  const [herramienta, setHerramienta] = useState({
+    nombre: "",
+    marca: "",
+    categoria: "",
+    numSerie: "",
+    fechaCompra: "",
+    origenHerramienta: "",
+    estadoHerramienta: "",
+    vidaUtil: "",
+    cantidad: "",
+  });
+  const categoria = undefined;
   const [consumible, setConsumible] = useState(categoria === "consumible");
   let nombreRef = useRef();
   let marcaRef = useRef();
@@ -56,6 +57,18 @@ function EditHerramientas({ defaultValues }) {
     }
   }
 
+  async function traerHerramienta() {
+    let res = await ObtenerDatosHerramienta(1);
+    console.log(res);
+    if (res){
+      nombreRef.current.value = res.nombre
+    }
+  }
+
+  useEffect(() => {
+    traerHerramienta();
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -74,14 +87,12 @@ function EditHerramientas({ defaultValues }) {
               type={"text"}
               TLLabel={"Nombre"}
               inputRef={nombreRef}
-              defaultValue={nombre}
             />
             <StyledInput
               placeholder={"Ingrese la marca"}
               type={"text"}
               TLLabel={"Marca"}
               inputRef={marcaRef}
-              defaultValue={marca}
             />
 
             <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
@@ -115,7 +126,6 @@ function EditHerramientas({ defaultValues }) {
                       min={1}
                       className="input input-bordered rounded-full w-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
                       ref={cantidadRef}
-                      defaultValue={cantidad}
                     />
                   </span>
                 ) : (
@@ -129,7 +139,6 @@ function EditHerramientas({ defaultValues }) {
               type={"number"}
               TLLabel={"Número de serie"}
               inputRef={numSerieRef}
-              defaultValue={numSerie}
             />
             <StyledButton accept btnType={"submit"} innerText={"Enviar"} />
           </div>
@@ -139,14 +148,12 @@ function EditHerramientas({ defaultValues }) {
               type={"date"}
               TLLabel={"Fecha de compra"}
               inputRef={fechaCompraRef}
-              defaultValue={fechaCompra.split("/").reverse().join("-")}
             />
             <StyledInput
               placeholder={"Ingrese el origen"}
               type={"text"}
               TLLabel={"Origen de la herramienta"}
               inputRef={origenHerramientaRef}
-              defaultValue={origenHerramienta}
             />
             <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
               <label className="text-label underline grey pb-2 ">
@@ -155,7 +162,6 @@ function EditHerramientas({ defaultValues }) {
               <select
                 ref={estadoHerramientaRef}
                 className="input  input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none w-full"
-                defaultValue={estadoHerramienta}
               >
                 <option value={undefined}>Seleccione un estado</option>
                 <option value={"Nuevo"} className="text-black">
@@ -174,7 +180,6 @@ function EditHerramientas({ defaultValues }) {
               type={"text"}
               TLLabel={"Vida útil de la herramienta"}
               inputRef={vidaUtilRef}
-              defaultValue={vidaUtil}
             />
             <StyledButton remove btnType={""} innerText={"Cancelar"} />
           </div>
