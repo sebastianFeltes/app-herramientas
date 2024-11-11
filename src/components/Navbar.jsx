@@ -1,64 +1,86 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo-cfl.png";
 import StyledButton from "./StyledButton";
-function Navbar() {
-  return (
-    <div>
-      <div className="navbar bg-blue-700">
-        <div className="flex-1">
-          <Link to={"/home"} className="w-16">
-            <img className="w-full" src={logo} alt="" />
-          </Link>
-        </div>
-        <div className="flex-none">
-          <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link to={"/inventario"}>
-                <StyledButton
-                  link
-                  innerText={"Inventario"}
-                  btnType={"sumbit"}
-                />
-              </Link>
-            </li>
-            <li>
-              <Link to={"/historial-herramientas"}>
-                <StyledButton link innerText={"Historial"} btnType={"sumbit"} />
-              </Link>
-            </li>
-            <li>
-              <Link to={"/alta-herramientas"}>
-                <StyledButton
-                  link
-                  innerText={"Alta Herramientas"}
-                  btnType={"sumbit"}
-                />
-              </Link>
-            </li>
-            <li>
-              <Link to={"/lector-qr"}>
-                <StyledButton link innerText={"Lector QR"} btnType={"sumbit"} />
-              </Link>
-            </li>
+import { useState } from "react";
 
-            {/* <li>
-              <details>
-                <summary>Parent</summary>
-                <ul className="bg-base-100 rounded-t-none p-2">
-                  <li>
-                    <a>Link 1</a>
-                  </li>
-                  <li>
-                    <a>Link 2</a>
-                  </li>
-                </ul>
-              </details>
-            </li> */}
-          </ul>
-        </div>
+const links = [
+  {
+    text: "Inventario",
+    path: "/inventario",
+  },
+  {
+    text: "Historial Herramientas",
+    path: "/historial-herramientas",
+  },
+  {
+    text: "Alta Herramienta",
+    path: "/alta-herramientas",
+  },
+  {
+    text: "Lector QR",
+    path: "/lector-qr",
+  },
+];
+
+function Navbar() {
+  const nombreUs = localStorage.getItem("nombreUsuario") && localStorage.getItem("nombreUsuario").split("")[0] || "N";
+  const apellidoUs =localStorage.getItem("apellidoUsuario") && localStorage.getItem("apellidoUsuario").split("")[0] || "C";
+  // console.log(nombreUs, apellidoUs);
+  const location = useLocation();
+
+  return (
+    <div className="navbar bg-blue-700 sticky top-0 z-50">
+      <div className="flex-1">
+        <Link to={"/home"} className="w-16">
+          <img className="w-full" src={logo} alt="" />
+        </Link>
+      </div>
+      <div className="flex-none">
+        <ul className="menu menu-horizontal px-1 gap-2">
+          {links.map((link, index) => (
+            <li key={index}>
+              <Link
+                className="btn min-w-56 bg-blue-700  border-gray-300 text-gray-200 hover:bg-blue-600 hover:text-white hover:underline hover:border-white hover:decoration-white "
+                to={link.path}
+              >
+                {link.text}
+              </Link>
+            </li>
+          ))}
+          <div className="dropdown dropdown-end  flex">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar border border-white"
+            >
+              {nombreUs}
+              {apellidoUs}
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content bg-blue-700 rounded-box z-[1] mt-3 w-52 p-2 shadow text-white"
+            >
+              <li>
+                <a className="justify-between">Profile</a>
+              </li>
+              <li>
+                <a>Settings</a>
+              </li>
+              <li>
+                <a>Logout</a>
+              </li>
+            </ul>
+          </div>
+        </ul>
       </div>
     </div>
   );
 }
 
 export default Navbar;
+
+/* 
+Tamaño mas chico de botones
+Hover dentro del boton
+Daisy Navbar Ul 
+*/

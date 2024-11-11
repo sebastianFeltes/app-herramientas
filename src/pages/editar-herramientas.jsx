@@ -3,65 +3,89 @@ import StyledButton from "../components/StyledButton";
 import Navbar from "../components/Navbar";
 import { useEffect, useRef, useState } from "react";
 import { ObtenerDatosHerramienta } from "../services/editar-herramienta.services";
+import ModalMessage from "../components/ModalMessage";
+import {
+  getCategorias,
+  getEstados,
+} from "../services/alta-herramientas.services";
 // import { putEditHerramienta } from "../services/alta-herramientas.services";
 
 function EditHerramientas() {
-  const [herramienta, setHerramienta] = useState({
-    nombre: "",
-    marca: "",
-    categoria: "",
-    numSerie: "",
-    fechaCompra: "",
-    origenHerramienta: "",
-    estadoHerramienta: "",
-    vidaUtil: "",
-    cantidad: "",
-  });
-  const categoria = undefined;
-  const [consumible, setConsumible] = useState(categoria === "consumible");
-  let nombreRef = useRef();
-  let marcaRef = useRef();
-  let categoriaRef = useRef();
-  let numSerieRef = useRef();
-  let fechaCompraRef = useRef();
-  let origenHerramientaRef = useRef();
-  let estadoHerramientaRef = useRef();
-  let vidaUtilRef = useRef();
-  let cantidadRef = useRef();
+  //CREO LOS ESTADOS categorias Y estados QUE SE VA A LLENAR CON LOS DATOS QUE VENGAN DE LA DB
+  const [categorias, setCategorias] = useState([]);
+  const [estados, setEstados] = useState([]);
+  const [idDocente, setIdDocente] = useState(null);
+
+  const [error, setError] = useState(undefined);
+  const [success, setSuccess] = useState(undefined);
+
+  let nombre = useRef();
+  let marca = useRef();
+  let categoria = useRef();
+  let numSerie = useRef();
+  let fechaCompra = useRef();
+  let origenHerramienta = useRef();
+  let estadoHerramienta = useRef();
+  let vidaUtil = useRef();
+  let cantidad = useRef();
 
   async function enviarDatos(e) {
     e.preventDefault();
 
     const herramientaEditada = {
-      nombre: nombreRef.current.value,
-      marca: marcaRef.current.value,
-      categoria: categoriaRef.current.value,
-      numSerie: numSerieRef.current.value,
-      fechaCompra: fechaCompraRef.current.value.split("-").reverse().join("/"),
-      origenHerramienta: origenHerramientaRef.current.value,
-      estadoHerramienta: estadoHerramientaRef.current.value,
+      nombre: nombre.current.value,
+      marca: marca.current.value,
+      categoria: parseInt(categoria.current.value),
+      consumible: parseInt(cantidad.current.value),
+      numSerie: numSerie.current.value,
+      fechaCompra: fechaCompra.current.value.split("-").reverse().join("/"),
+      origenHerramienta: origenHerramienta.current.value,
+      estadoHerramienta: parseInt(estadoHerramienta.current.value),
       fechaCarga: new Date().toLocaleDateString(),
-      vidaUtil: vidaUtilRef.current.value,
+      horaCarga: new Date().toLocaleTimeString(),
+      vidaUtil: vidaUtil.current.value,
+      idDocente: idDocente,
     };
-
-    // let res = await putEditHerramienta(herramientaEditada);
-    // console.log(res);
-    // return res;
   }
 
-  function hacerConsumible() {
-    if (categoriaRef.current.value == "consumible") {
-      setConsumible(true);
-    } else {
-      setConsumible(false);
-    }
+  //FUNCIÓN QUE OBTIENE LAS CATEGORÍAS DE QUE TENEMOS EN LA DB
+  //Y SETEA categorias CON LOS DATOS QUE LLEGAN
+  async function obtenerCategorias() {
+    const res = await getCategorias();
+    return setCategorias(res);
   }
+
+  //FUNCIÓN QUE OBTIENE LOS ESTADOS QUE TENEMOS EN LA DB
+  //Y SETEA estados CON LOS DATOS QUE LLEGAN
+  async function obtenerEstados() {
+    const res = await getEstados();
+    return setEstados(res);
+  }
+
+  //SETEO ESTADO Y CATEGORÍA CUANDO SE RECARGA LA PÁGINA
+  useEffect(() => {
+    obtenerCategorias();
+    obtenerEstados();
+    // traigo el id del docente que carga la herr desde el localStorage
+    localStorage.getItem("idDocente") &&
+      setIdDocente(parseInt(localStorage.getItem("idDocente")));
+  }, []);
 
   async function traerHerramienta() {
     let res = await ObtenerDatosHerramienta(1);
     console.log(res);
-    if (res){
-      nombreRef.current.value = res.nombre
+    if (res && res.nombre) {
+      nombre.current.value = res.nombre;
+      marca.current.value = res.marca;
+      categoria.current.value = res.id_categoria;
+      cantidad.current.value = res.cantidad;
+      numSerie.current.value = res.nro_serie;
+      fechaCompra.current.value = res.fecha_compra.split("-").reverse().join("-");
+      origenHerramienta.current.value = res.origen_fondo;
+      estadoHerramienta.current.value = res.estado_ingreso;
+      vidaUtil.current.value = res.vida_util;
+    } else {
+      setError("No se pudo obtener datos de la herramienta");
     }
   }
 
@@ -72,116 +96,131 @@ function EditHerramientas() {
   return (
     <>
       <Navbar />
-      <div className="bg-white h-screen flex flex-col justify-center items-center w-full ">
-        <h1 className="text-black font-bold text-3xl mb-2">
-          Edición de herramientas
-        </h1>
+      <ModalMessage text={error || success} error={error ? true : false} />
+      <div className="bg-white h-min-screen flex flex-col justify-center items-center w-full">
         <form
+          onReset={(e) => {
+            e.target.reset();
+          }}
           onSubmit={(e) => enviarDatos(e)}
-          className="w-3/4  bg-white shadow-2xl shadow-black rounded-lg pb-3 pt-5 px-16 flex flex-row justify-evenly items-center"
+          className="w-3/4 bg-white shadow-2xl shadow-black rounded-lg py-5 px-16 my-8 flex flex-col items-center"
           action=""
         >
-          <div className="w-1/2 flex flex-col items-center justify-center">
-            <StyledInput
-              placeholder={"Ingrese el nombre"}
-              type={"text"}
-              TLLabel={"Nombre"}
-              inputRef={nombreRef}
-            />
-            <StyledInput
-              placeholder={"Ingrese la marca"}
-              type={"text"}
-              TLLabel={"Marca"}
-              inputRef={marcaRef}
-            />
+          <div className="w-full flex flex-row justify-evenly items-center">
+            <div className="w-1/2 flex flex-col items-center justify-center">
+              <StyledInput
+                placeholder={"Ingrese el nombre"}
+                type={"text"}
+                TLLabel={"Nombre"}
+                inputRef={nombre}
+                textColor={"text-black"}
+              />
+              <StyledInput
+                placeholder={"Ingrese la marca"}
+                type={"text"}
+                TLLabel={"Marca"}
+                inputRef={marca}
+                textColor={"text-black"}
+              />
 
-            <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
-              <label className="text-label underline grey pb-1">
-                Categoría
-              </label>
-              <div className="flex gap-1 max-w-xs ">
+              <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
+                <label className="text-label text-black underline grey pb-1">
+                  Categoría
+                </label>
                 <select
-                  onChange={hacerConsumible}
-                  ref={categoriaRef}
-                  defaultValue={categoria}
+                  ref={categoria}
                   placeholder="Seleccione una categoría"
                   className={`input  input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none 
-                    ${consumible ? "w-full" : "w-full"}`}
+                  `}
                 >
                   <option value={undefined}>Seleccione una categoría</option>
-                  <option value={"cat1"} className="text-black">
-                    Categoría 1
-                  </option>
-                  <option value={"cat2"} className="text-black">
-                    Categoría 2
-                  </option>
-                  <option value={"consumible"} className="text-black">
-                    Consumible
-                  </option>
+                  {categorias
+                    ? categorias.map((categoria, index) => (
+                        <option key={index} value={categoria.id_categoria}>
+                          {categoria.nombre}
+                        </option>
+                      ))
+                    : false}
                 </select>
-                {consumible ? (
-                  <span className="w-1/4">
-                    <input
-                      type="number"
-                      min={1}
-                      className="input input-bordered rounded-full w-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
-                      ref={cantidadRef}
-                    />
-                  </span>
-                ) : (
-                  false
-                )}
               </div>
-            </div>
 
-            <StyledInput
-              placeholder={"Ingrese el núm. de serie"}
-              type={"number"}
-              TLLabel={"Número de serie"}
-              inputRef={numSerieRef}
-            />
-            <StyledButton accept btnType={"submit"} innerText={"Enviar"} />
-          </div>
-          <div className="w-1/2 flex flex-col items-center justify-center ">
-            <StyledInput
-              placeholder={"Ingrese la fecha de compra"}
-              type={"date"}
-              TLLabel={"Fecha de compra"}
-              inputRef={fechaCompraRef}
-            />
-            <StyledInput
-              placeholder={"Ingrese el origen"}
-              type={"text"}
-              TLLabel={"Origen de la herramienta"}
-              inputRef={origenHerramientaRef}
-            />
-            <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
-              <label className="text-label underline grey pb-2 ">
-                Estado al ingreso
-              </label>
-              <select
-                ref={estadoHerramientaRef}
-                className="input  input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none w-full"
-              >
-                <option value={undefined}>Seleccione un estado</option>
-                <option value={"Nuevo"} className="text-black">
-                  Nuevo
-                </option>
-                <option value={"Usado"} className="text-black">
-                  Usado
-                </option>
-                <option value={"Dañado"} className="text-black">
-                  Dañado
-                </option>
-              </select>
+              <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
+                <label className="text-label text-black underline grey pb-1">
+                  Consumible
+                </label>
+                <input
+                  placeholder="Ingrese la cantidad"
+                  type="number"
+                  min={1}
+                  className="input input-bordered rounded-full w-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
+                  ref={cantidad}
+                />
+                {/* {consumible ? (
+                <span className="w-1/4">
+                  <input
+                    type="number"
+                    min={1}
+                    className="input input-bordered rounded-full w-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
+                    ref={cantidad}
+                  />
+                </span>
+              ) : (
+                false
+              )} */}
+              </div>
+              <StyledInput
+                placeholder={"Ingrese el núm. de serie"}
+                type={"text"}
+                TLLabel={"Número de serie"}
+                inputRef={numSerie}
+                textColor={"text-black"}
+              />
             </div>
-            <StyledInput
-              placeholder={"Ingrese la vida útil"}
-              type={"text"}
-              TLLabel={"Vida útil de la herramienta"}
-              inputRef={vidaUtilRef}
-            />
-            <StyledButton remove btnType={""} innerText={"Cancelar"} />
+            <div className="w-1/2 flex flex-col items-center justify-center ">
+              <StyledInput
+                placeholder={"Ingrese la fecha de compra"}
+                type={"date"}
+                TLLabel={"Fecha de compra"}
+                inputRef={fechaCompra}
+                textColor={"text-black"}
+              />
+              <StyledInput
+                placeholder={"Ingrese el origen"}
+                type={"text"}
+                TLLabel={"Origen de la herramienta"}
+                inputRef={origenHerramienta}
+                textColor={"text-black"}
+              />
+              <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
+                <label className="text-label text-black underline pb-2 ">
+                  Estado al ingreso
+                </label>
+                <select
+                  ref={estadoHerramienta}
+                  className="input input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none w-full"
+                >
+                  <option value={undefined}>Seleccione un estado</option>
+                  {estados
+                    ? estados.map((estado, index) => (
+                        <option key={index} value={estado.id_estado}>
+                          {estado.nombre}
+                        </option>
+                      ))
+                    : false}
+                </select>
+              </div>
+              <StyledInput
+                placeholder={"Ingrese la vida útil en años"}
+                type={"number"}
+                TLLabel={"Vida útil de la herramienta"}
+                inputRef={vidaUtil}
+                textColor={"text-black"}
+              />
+            </div>
+          </div>
+          <div className="w-full flex justify-around">
+            <StyledButton accept btnType={"submit"} innerText={"Enviar"} />
+            <StyledButton remove btnType={"reset"} innerText={"Cancelar"} />
           </div>
         </form>
       </div>

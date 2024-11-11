@@ -1,12 +1,28 @@
 import StyledInput from "../components/StyledInput";
 import StyledButton from "../components/StyledButton";
 import Navbar from "../components/Navbar";
-import { useRef, useState } from "react";
-import { postAltaHerramienta } from "../services/alta-herramientas.services";
+import { useEffect, useRef, useState } from "react";
+import {
+  postAltaHerramienta,
+  getCategorias,
+  getEstados,
+} from "../services/alta-herramientas.services";
+import ModalMessage from "../components/ModalMessage";
 
 function AltaHerramientas() {
-  //CONSTANTE CONSUMIBLE PARA PODER IR AUMENTANDOLO
-  const [consumible, setConsumible] = useState(false);
+  //CREO LOS ESTADOS categorias Y estados QUE SE VA A LLENAR CON LOS DATOS QUE VENGAN DE LA DB
+  const [categorias, setCategorias] = useState([]);
+  const [estados, setEstados] = useState([]);
+
+  // ESTADOS PARA MOSTRAR EL MODAL UNA VEZ QUE CARGO LA HERRAMIENTA
+  const [error, setError] = useState(undefined);
+  const [success, setSuccess] = useState(undefined);
+
+  const [idDocente, setIdDocente] = useState(null);
+
+  /* //CREO EL ESTADO consumible PARA PODER IR AUMENTANDOLO
+  const [consumible, setConsumible] = useState(false); */
+
   //CREO UNA REFERENCIA PARA CADA UNO DE LOS INPUTS
   let nombre = useRef();
   let marca = useRef();
@@ -18,6 +34,29 @@ function AltaHerramientas() {
   let vidaUtil = useRef();
   let cantidad = useRef();
 
+  //FUNCIÓN QUE OBTIENE LAS CATEGORÍAS DE QUE TENEMOS EN LA DB
+  //Y SETEA categorias CON LOS DATOS QUE LLEGAN
+  async function obtenerCategorias() {
+    const res = await getCategorias();
+    return setCategorias(res);
+  }
+
+  //FUNCIÓN QUE OBTIENE LOS ESTADOS QUE TENEMOS EN LA DB
+  //Y SETEA estados CON LOS DATOS QUE LLEGAN
+  async function obtenerEstados() {
+    const res = await getEstados();
+    return setEstados(res);
+  }
+
+  //SETEO ESTADO Y CATEGORÍA CUANDO SE RECARGA LA PÁGINA
+  useEffect(() => {
+    obtenerCategorias();
+    obtenerEstados();
+    // traigo el id del docente que carga la herr desde el localStorage
+    localStorage.getItem("idDocente") &&
+      setIdDocente(parseInt(localStorage.getItem("idDocente")));
+  }, []);
+
   //FUNCIÓN QUE SE EJECUTA CUANDO HAGO EL SUBMIT
   //SETEA LOS DATOS DE LA HERRAMIENTA Y SE LOS ENVÍA A LA FUNCIÓN "postAltaHerramienta()"
   async function enviarDatos(e) {
@@ -26,79 +65,104 @@ function AltaHerramientas() {
     const nuevaHerramienta = {
       nombre: nombre.current.value,
       marca: marca.current.value,
-      categoria: categoria.current.value,
+      categoria: parseInt(categoria.current.value),
+      consumible: parseInt(cantidad.current.value),
       numSerie: numSerie.current.value,
       fechaCompra: fechaCompra.current.value.split("-").reverse().join("/"),
       origenHerramienta: origenHerramienta.current.value,
-      estadoHerramienta: estadoHerramienta.current.value,
+      estadoHerramienta: parseInt(estadoHerramienta.current.value),
       fechaCarga: new Date().toLocaleDateString(),
+      horaCarga: new Date().toLocaleTimeString(),
       vidaUtil: vidaUtil.current.value,
+      idDocente: idDocente,
     };
 
     let res = await postAltaHerramienta(nuevaHerramienta);
     console.log(res);
+
+    // SI EL SERVIDOR RESPONDE CON "herramienta cargada" MUESTRO EL MODAL QUE DIGA HERRAMIENTA CARGADA
+    // SINO UNO QUE DIGA ERROR
+    if (res.message == "herramienta cargada") {
+      setSuccess(res.message);
+    } else {
+      setError(res.message);
+    }
+    document.getElementById("my_modal_1").showModal();
     return res;
   }
 
-  //SI ELIJO CATEGORÍA CONSUMIBLE PUEDO AUMENTARLE LA CANTIDAD
+  /*  //SI ELIJO CATEGORÍA CONSUMIBLE PUEDO AUMENTARLE LA CANTIDAD
   function hacerConsumible() {
-    if (categoria.current.value == "consumible") {
+    if (consumibleRef.current.value == "consumible") {
       return setConsumible(true);
     } else {
       return setConsumible(false);
     }
-  }
+  } */
 
   return (
     <>
       <Navbar />
-      <div className="bg-white h-screen flex flex-col justify-center items-center w-full ">
-        <h1 className="text-black font-bold text-3xl mb-2">
-          Alta de herramientas
-        </h1>
+      <ModalMessage text={error || success} error={error ? true : false} />
+      <div className="bg-white h-min-screen flex flex-col justify-center items-center w-full">
         <form
+          onReset={(e) => {
+            e.target.reset();
+          }}
           onSubmit={(e) => enviarDatos(e)}
-          className="w-3/4  bg-white shadow-2xl shadow-black rounded-lg pb-3 pt-5 px-16 flex flex-row justify-evenly items-center"
+          className="w-3/4 bg-white shadow-2xl shadow-black rounded-lg py-5 px-16 my-8 flex flex-col items-center"
           action=""
         >
-          <div className="w-1/2 flex flex-col items-center justify-center">
-            <StyledInput
-              placeholder={"Ingrese el nombre"}
-              type={"text"}
-              TLLabel={"Nombre"}
-              inputRef={nombre}
-            />
-            <StyledInput
-              placeholder={"Ingrese la marca"}
-              type={"text"}
-              TLLabel={"Marca"}
-              inputRef={marca}
-            />
+          <div className="w-full flex flex-row justify-evenly items-center">
+            <div className="w-1/2 flex flex-col items-center justify-center">
+              <StyledInput
+                placeholder={"Ingrese el nombre"}
+                type={"text"}
+                TLLabel={"Nombre"}
+                inputRef={nombre}
+                textColor={"text-black"}
+              />
+              <StyledInput
+                placeholder={"Ingrese la marca"}
+                type={"text"}
+                TLLabel={"Marca"}
+                inputRef={marca}
+                textColor={"text-black"}
+              />
 
-            <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
-              <label className="text-label underline grey pb-1">
-                Categoría
-              </label>
-              <div className="flex gap-1 max-w-xs ">
+              <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
+                <label className="text-label text-black underline grey pb-1">
+                  Categoría
+                </label>
                 <select
-                  onChange={hacerConsumible}
                   ref={categoria}
                   placeholder="Seleccione una categoría"
                   className={`input  input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none 
-                    ${consumible ? "w-full" : "w-full"}`}
+                    `}
                 >
                   <option value={undefined}>Seleccione una categoría</option>
-                  <option value={"categoria 1"} className="text-black">
-                    Categoría 1
-                  </option>
-                  <option value={"categoria 2"} className="text-black">
-                    Categoría 2
-                  </option>
-                  <option value={"consumible"} className="text-black">
-                    Consumible
-                  </option>
+                  {categorias
+                    ? categorias.map((categoria, index) => (
+                        <option key={index} value={categoria.id_categoria}>
+                          {categoria.nombre}
+                        </option>
+                      ))
+                    : false}
                 </select>
-                {consumible ? (
+              </div>
+
+              <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
+                <label className="text-label text-black underline grey pb-1">
+                  Consumible
+                </label>
+                <input
+                  placeholder="Ingrese la cantidad"
+                  type="number"
+                  min={1}
+                  className="input input-bordered rounded-full w-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
+                  ref={cantidad}
+                />
+                {/* {consumible ? (
                   <span className="w-1/4">
                     <input
                       type="number"
@@ -109,58 +173,61 @@ function AltaHerramientas() {
                   </span>
                 ) : (
                   false
-                )}
+                )} */}
               </div>
+              <StyledInput
+                placeholder={"Ingrese el núm. de serie"}
+                type={"text"}
+                TLLabel={"Número de serie"}
+                inputRef={numSerie}
+                textColor={"text-black"}
+              />
             </div>
-
-            <StyledInput
-              placeholder={"Ingrese el núm. de serie"}
-              type={"number"}
-              TLLabel={"Número de serie"}
-              inputRef={numSerie}
-            />
-            <StyledButton accept btnType={"submit"} innerText={"Enviar"} />
+            <div className="w-1/2 flex flex-col items-center justify-center ">
+              <StyledInput
+                placeholder={"Ingrese la fecha de compra"}
+                type={"date"}
+                TLLabel={"Fecha de compra"}
+                inputRef={fechaCompra}
+                textColor={"text-black"}
+              />
+              <StyledInput
+                placeholder={"Ingrese el origen"}
+                type={"text"}
+                TLLabel={"Origen de la herramienta"}
+                inputRef={origenHerramienta}
+                textColor={"text-black"}
+              />
+              <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
+                <label className="text-label text-black underline pb-2 ">
+                  Estado al ingreso
+                </label>
+                <select
+                  ref={estadoHerramienta}
+                  className="input input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none w-full"
+                >
+                  <option value={undefined}>Seleccione un estado</option>
+                  {estados
+                    ? estados.map((estado, index) => (
+                        <option key={index} value={estado.id_estado}>
+                          {estado.nombre}
+                        </option>
+                      ))
+                    : false}
+                </select>
+              </div>
+              <StyledInput
+                placeholder={"Ingrese la vida útil en años"}
+                type={"number"}
+                TLLabel={"Vida útil de la herramienta"}
+                inputRef={vidaUtil}
+                textColor={"text-black"}
+              />
+            </div>
           </div>
-          <div className="w-1/2 flex flex-col items-center justify-center ">
-            <StyledInput
-              placeholder={"Ingrese la fecha de compra"}
-              type={"date"}
-              TLLabel={"Fecha de compra"}
-              inputRef={fechaCompra}
-            />
-            <StyledInput
-              placeholder={"Ingrese el origen"}
-              type={"text"}
-              TLLabel={"Origen de la herramienta"}
-              inputRef={origenHerramienta}
-            />
-            <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
-              <label className="text-label underline grey pb-2 ">
-                Estado al ingreso
-              </label>
-              <select
-                ref={estadoHerramienta}
-                className="input  input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none w-full"
-              >
-                <option value={undefined}>Seleccione un estado</option>
-                <option value={"Nuevo"} className="text-black">
-                  Nuevo
-                </option>
-                <option value={"Usado"} className="text-black">
-                  Usado
-                </option>
-                <option value={"Dañado"} className="text-black">
-                  Dañado
-                </option>
-              </select>
-            </div>
-            <StyledInput
-              placeholder={"Ingrese la vida útil"}
-              type={"text"}
-              TLLabel={"Vida útil de la herramienta"}
-              inputRef={vidaUtil}
-            />
-            <StyledButton remove btnType={""} innerText={"Cancelar"} />
+          <div className="w-full flex justify-around">
+            <StyledButton accept btnType={"submit"} innerText={"Enviar"} />
+            <StyledButton remove btnType={"reset"} innerText={"Cancelar"} />
           </div>
         </form>
       </div>
