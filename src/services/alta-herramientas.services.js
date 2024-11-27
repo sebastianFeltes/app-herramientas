@@ -14,7 +14,7 @@ export async function getEstados() {
 
 //VALIDA LOS DATOS DE LA HERRAMIENTA CARGADA Y HACE EL POST DE LA HERRAMIENTA
 export async function postAltaHerramienta(herramienta) {
-  if (!herramienta.nombre) {
+  /*  if (!herramienta.nombre) {
     return console.log("Ingrese el nombre de la herramienta");
   }
   if (!herramienta.marca) {
@@ -23,8 +23,8 @@ export async function postAltaHerramienta(herramienta) {
   if (herramienta.categoria == "Seleccione una categoría") {
     return console.log("Seleccione una categoría");
   }
-  if (herramienta.categoria == "Seleccione un consumible") {
-    return console.log("Seleccione un consumible");
+  if (!herramienta.cantidad) {
+    return console.log("Ingrese la cantidad");
   }
   if (!herramienta.numSerie) {
     return console.log("Ingrese el número de serie de la herramienta");
@@ -37,7 +37,9 @@ export async function postAltaHerramienta(herramienta) {
   }
   if (!herramienta.fechaCarga) {
     return console.log("Ingrese la fecha de carga de la herramienta");
-  }
+  } */
+
+  console.log(herramienta);
 
   let res = await post("/herramienta", herramienta);
 

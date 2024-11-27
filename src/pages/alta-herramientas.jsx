@@ -18,10 +18,11 @@ function AltaHerramientas() {
   const [error, setError] = useState(undefined);
   const [success, setSuccess] = useState(undefined);
 
+  // ID DE QUIEN CARGA LA HERRAMIENTA
   const [idDocente, setIdDocente] = useState(null);
 
-  /* //CREO EL ESTADO consumible PARA PODER IR AUMENTANDOLO
-  const [consumible, setConsumible] = useState(false); */
+  // ESTADO QUE LE PASO A LA PROPIEDAD DISABLED DEL BOTON ENVIAR
+  const [disabled, setDisabled] = useState(true);
 
   //CREO UNA REFERENCIA PARA CADA UNO DE LOS INPUTS
   let nombre = useRef();
@@ -32,6 +33,7 @@ function AltaHerramientas() {
   let origenHerramienta = useRef();
   let estadoHerramienta = useRef();
   let vidaUtil = useRef();
+  let consumible = useRef();
   let cantidad = useRef();
 
   //FUNCIÓN QUE OBTIENE LAS CATEGORÍAS DE QUE TENEMOS EN LA DB
@@ -57,6 +59,23 @@ function AltaHerramientas() {
       setIdDocente(parseInt(localStorage.getItem("idDocente")));
   }, []);
 
+  // CHEQUEA QUE TODOS LOS CAMPOS REQUERIDOS ESTEN LLENOS PARA ACTIVAR EL BOTON DE ENVIAR
+  function checkFormComplete() {
+    const formDataCompleted =
+      nombre.current.value &&
+      marca.current.value &&
+      categoria.current.value &&
+      cantidad.current.value &&
+      numSerie.current.value &&
+      fechaCompra.current.value &&
+      origenHerramienta.current.value &&
+      estadoHerramienta.current.value &&
+      vidaUtil.current.value;
+
+    // Si falta algún campo, deshabilita el botón
+    setDisabled(!formDataCompleted);
+  }
+
   //FUNCIÓN QUE SE EJECUTA CUANDO HAGO EL SUBMIT
   //SETEA LOS DATOS DE LA HERRAMIENTA Y SE LOS ENVÍA A LA FUNCIÓN "postAltaHerramienta()"
   async function enviarDatos(e) {
@@ -66,7 +85,8 @@ function AltaHerramientas() {
       nombre: nombre.current.value,
       marca: marca.current.value,
       categoria: parseInt(categoria.current.value),
-      consumible: parseInt(cantidad.current.value),
+      cantidad: parseInt(cantidad.current.value),
+      consumible: consumible.current.checked,
       numSerie: numSerie.current.value,
       fechaCompra: fechaCompra.current.value.split("-").reverse().join("/"),
       origenHerramienta: origenHerramienta.current.value,
@@ -78,7 +98,6 @@ function AltaHerramientas() {
     };
 
     let res = await postAltaHerramienta(nuevaHerramienta);
-    console.log(res);
 
     // SI EL SERVIDOR RESPONDE CON "herramienta cargada" MUESTRO EL MODAL QUE DIGA HERRAMIENTA CARGADA
     // SINO UNO QUE DIGA ERROR
@@ -90,15 +109,6 @@ function AltaHerramientas() {
     document.getElementById("my_modal_1").showModal();
     return res;
   }
-
-  /*  //SI ELIJO CATEGORÍA CONSUMIBLE PUEDO AUMENTARLE LA CANTIDAD
-  function hacerConsumible() {
-    if (consumibleRef.current.value == "consumible") {
-      return setConsumible(true);
-    } else {
-      return setConsumible(false);
-    }
-  } */
 
   return (
     <>
@@ -121,6 +131,7 @@ function AltaHerramientas() {
                 TLLabel={"Nombre"}
                 inputRef={nombre}
                 textColor={"text-black"}
+                onChange={checkFormComplete}
               />
               <StyledInput
                 placeholder={"Ingrese la marca"}
@@ -128,6 +139,7 @@ function AltaHerramientas() {
                 TLLabel={"Marca"}
                 inputRef={marca}
                 textColor={"text-black"}
+                onChange={checkFormComplete}
               />
 
               <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
@@ -137,6 +149,7 @@ function AltaHerramientas() {
                 <select
                   ref={categoria}
                   placeholder="Seleccione una categoría"
+                  onChange={checkFormComplete}
                   className={`input  input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none 
                     `}
                 >
@@ -151,45 +164,49 @@ function AltaHerramientas() {
                 </select>
               </div>
 
+              <StyledInput
+                placeholder={"Ingrese la cantidad"}
+                type={"number"}
+                min={1}
+                TLLabel={"Cantidad"}
+                inputRef={cantidad}
+                textColor={"text-black"}
+                onChange={checkFormComplete}
+              />
+
               <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
-                <label className="text-label text-black underline grey pb-1">
+                <label className="text-label text-black underline grey pb-1 pt-2">
                   Consumible
                 </label>
-                <input
-                  placeholder="Ingrese la cantidad"
-                  type="number"
-                  min={1}
-                  className="input input-bordered rounded-full w-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
-                  ref={cantidad}
-                />
-                {/* {consumible ? (
-                  <span className="w-1/4">
-                    <input
-                      type="number"
-                      min={1}
-                      className="input input-bordered rounded-full w-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none"
-                      ref={cantidad}
-                    />
-                  </span>
-                ) : (
-                  false
-                )} */}
+                <div className="h-10 flex justify-start items-center gap-2 ml-2">
+                  <span className="text-label text-black">No</span>
+                  <input
+                    defaultChecked={false}
+                    type="checkbox"
+                    className="toggle toggle-info"
+                    ref={consumible}
+                    onChange={checkFormComplete}
+                  />
+                  <span className="text-label text-black">Si</span>
+                </div>
               </div>
+            </div>
+            <div className="w-1/2 flex flex-col items-center justify-center ">
               <StyledInput
                 placeholder={"Ingrese el núm. de serie"}
                 type={"text"}
                 TLLabel={"Número de serie"}
                 inputRef={numSerie}
                 textColor={"text-black"}
+                onChange={checkFormComplete}
               />
-            </div>
-            <div className="w-1/2 flex flex-col items-center justify-center ">
               <StyledInput
                 placeholder={"Ingrese la fecha de compra"}
                 type={"date"}
                 TLLabel={"Fecha de compra"}
                 inputRef={fechaCompra}
                 textColor={"text-black"}
+                onChange={checkFormComplete}
               />
               <StyledInput
                 placeholder={"Ingrese el origen"}
@@ -197,12 +214,14 @@ function AltaHerramientas() {
                 TLLabel={"Origen de la herramienta"}
                 inputRef={origenHerramienta}
                 textColor={"text-black"}
+                onChange={checkFormComplete}
               />
               <div className="flex flex-col justify-center pb-3 w-full max-w-xs">
                 <label className="text-label text-black underline pb-2 ">
                   Estado al ingreso
                 </label>
                 <select
+                  onChange={checkFormComplete}
                   ref={estadoHerramienta}
                   className="input input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none w-full"
                 >
@@ -219,14 +238,21 @@ function AltaHerramientas() {
               <StyledInput
                 placeholder={"Ingrese la vida útil en años"}
                 type={"number"}
+                min={1}
                 TLLabel={"Vida útil de la herramienta"}
                 inputRef={vidaUtil}
                 textColor={"text-black"}
+                onChange={checkFormComplete}
               />
             </div>
           </div>
           <div className="w-full flex justify-around">
-            <StyledButton accept btnType={"submit"} innerText={"Enviar"} />
+            <StyledButton
+              accept
+              disabled={disabled}
+              btnType={"submit"}
+              innerText={"Enviar"}
+            />
             <StyledButton remove btnType={"reset"} innerText={"Cancelar"} />
           </div>
         </form>

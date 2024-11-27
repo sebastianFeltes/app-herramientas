@@ -12,6 +12,7 @@ function StyledInput({
   onChange,
   // eslint-disable-next-line react/prop-types
   textColor,
+  min,
 }) {
   return (
     <label className="form-control w-full max-w-xs">
@@ -20,6 +21,7 @@ function StyledInput({
         <span className={`text-label-alt ${textColor}`}>{TRLabel}</span>
       </div>
       <input
+        min={min}
         ref={inputRef}
         type={type}
         placeholder={placeholder}
@@ -41,7 +43,7 @@ StyledInput.propTypes = {
   TRLabel: PropTypes.string,
   BLLabel: PropTypes.string,
   BRLabel: PropTypes.string,
-  inputRef: PropTypes.object
+  inputRef: PropTypes.object,
 };
 
 export default StyledInput;
