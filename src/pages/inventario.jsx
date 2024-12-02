@@ -66,10 +66,8 @@ function Inventario() {
               textColor={"text-black"}
               placeholder={"Filtrar por marca"}
             />
-            <StyledInput
-              textColor={"text-black"}
-              placeholder={"Filtrar por categoria"}
-            />
+
+           
             <StyledInput
               textColor={"text-black"}
               placeholder={"Filtrar por estado"}
