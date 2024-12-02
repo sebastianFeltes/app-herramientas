@@ -23,8 +23,8 @@ const links = [
 ];
 
 function Navbar() {
-  const nombreUs = localStorage.getItem("nombreUsuario").split("")[0];
-  const apellidoUs = localStorage.getItem("apellidoUsuario").split("")[0];
+  const nombreUs = "S"//localStorage.getItem("nombreUsuario").split("")[0];
+  const apellidoUs = "F"//localStorage.getItem("apellidoUsuario").split("")[0];
   // console.log(nombreUs, apellidoUs);
   const location = useLocation();
 

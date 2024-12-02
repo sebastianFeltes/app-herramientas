@@ -1,15 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import StyledButton from "../components/StyledButton";
 import StyledInput from "../components/StyledInput";
 import { get } from "../services/utils.services";
 
 function Inventario() {
   const [inventario, setInventario] = useState(undefined);
+  const [currentPage, setCurrentPage] = useState(2);
+  const [itemsPerPage] = useState(2);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const term = useRef(); //referencia para el termino del filtro
 
   async function obtenerInventario() {
-    const data = await get("/inventario");
-    setInventario(data);
+    const data = await get(
+      "/inventario?page=" + currentPage + "&items=" + itemsPerPage
+      // "/inventario?page=1&items=10"
+    );
+    // setInventario(data);
+    console.log(data);
+    setCurrentPage(data.page);
+    setTotalItems(data.total_items);
   }
+
+  useEffect(() => {
+    obtenerInventario();
+  }, []);
+
+  function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      // console.log(timer);
+      timer = setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  async function filtrar() {
+    // setTimeout(() => {
+    // }, 1000);
+    let termino = term.current.value;
+    if (termino && termino.length >= 2) {
+      console.log(termino.toLowerCase());
+      get("/inventario?termino=" + termino + "&pagina=1");
+      //let termino = req.query.termino
+      //let pagina = req.query.pagina
+    }
+  }
+
+  //paginacion
 
   return (
     <div className="hero bg-white min-h-screen w-full">
@@ -18,20 +56,14 @@ function Inventario() {
           <h1 className="text-5xl font-bold">Inventario</h1>
           <div className="w-full flex justify-evenly items-center gap-2 border bg-blue-700 p-2">
             <StyledInput
+              inputRef={term}
+              onChange={debounce(filtrar, 500, "user")}
+              // onChange={() => filtrar()}
+              type="text"
               textColor={"text-black"}
-              placeholder={"Filtrar por nombre"}
-            />
-            <StyledInput
-              textColor={"text-black"}
-              placeholder={"Filtrar por marca"}
-            />
-            <StyledInput
-              textColor={"text-black"}
-              placeholder={"Filtrar por categoria"}
-            />
-            <StyledInput
-              textColor={"text-black"}
-              placeholder={"Filtrar por estado"}
+              placeholder={
+                "Filtrar por nombre, categoria, marca, nro serie, estado"
+              }
             />
           </div>
           <div className="w-full grow-1 border">
@@ -67,6 +99,12 @@ function Inventario() {
                     </td>
                   </tr>
                 </tbody>
+                {/* pagination */}
+                <tfoot>
+                  <p className="text-black text-xl">
+                    Pagina: {currentPage}, Herramientas totales: {totalItems}
+                  </p>
+                </tfoot>
               </table>
             </div>
           </div>
