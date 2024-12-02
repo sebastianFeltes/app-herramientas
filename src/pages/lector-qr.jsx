@@ -1,5 +1,4 @@
-import { useRef, useState } from "react";
-import Navbar from "../components/Navbar";
+import { useEffect, useRef, useState } from "react";
 import StyledInput from "../components/StyledInput";
 import {
   getHerramienta,
@@ -7,6 +6,7 @@ import {
   postHerramientasAAsignar,
   returnHerramienta,
 } from "../services/lector-qr.services";
+import ModalMessage from "../components/ModalMessage";
 
 function LectorQr() {
   const code = useRef();
@@ -14,7 +14,37 @@ function LectorQr() {
   const [paso, setPaso] = useState(1);
   const [herramientasAAsignar, setHerramientasAAsignar] = useState([]);
   const [alumno, setAlumno] = useState(null);
+  const [hora, setHora] = useState(null);
+  const [error, setError] = useState(undefined);
+  const [success, setSuccess] = useState(undefined);
+  function getHora() {
+    let date = new Date().toLocaleTimeString();
+    setHora(date);
+  }
+  function errorAndReset(text) {
+    setPaso(1);
+    setHerramientasAsignadas([]);
+    setHerramientasAAsignar([]);
+    setAlumno(null);
+    setError(text);
+    setSuccess(undefined);
+    document.getElementById("my_modal_1").showModal();
+  }
+  function successAndReset(text) {
+    setPaso(1);
+    setHerramientasAsignadas([]);
+    setHerramientasAAsignar([]);
+    setAlumno(null);
+    setSuccess(text);
+    setError(undefined);
+    document.getElementById("my_modal_1").showModal();
+  }
 
+  useEffect(() => {
+    setInterval(() => {
+      getHora();
+    }, 1000);
+  }, []);
   async function LecturaQr() {
     let codigo = code.current.value;
     let cadena = codigo.split("");
@@ -34,11 +64,11 @@ function LectorQr() {
       cadena.pop();
       let idHerramienta = parseInt(cadena.join(""));
       //Si la herramienta está, entonces la devuelve
-      if (
-        herramientasAsignadas.some(
-          (herramienta) => idHerramienta == herramienta.id_herramienta
-        )
-      ) {
+      let Asignadas = herramientasAsignadas.some(
+        (herramienta) => idHerramienta == herramienta.id_herramienta
+      );
+
+      if (Asignadas) {
         let nuevasHerramientasAsignadas = herramientasAsignadas.filter(
           (herramienta) => idHerramienta != herramienta.id_herramienta
         );
@@ -46,22 +76,24 @@ function LectorQr() {
           id_alumno: alumno,
           id_herramienta: idHerramienta,
         });
-        console.log(response);
+        /* console.log(response); */
 
         setHerramientasAsignadas(nuevasHerramientasAsignadas);
       } else {
         let isAssigned = herramientasAAsignar.some(
           (herramienta) => idHerramienta == herramienta.id_herramienta
         );
-        if (isAssigned) {
-          console.log("ya está asignada");
-        }
-        const response = await getHerramienta(idHerramienta);
-        //Valida si response recibe herramientas
-        if (response.length > 0) {
-          setHerramientasAAsignar([...herramientasAAsignar, response[0]]);
-        } else {
-          console.log("No se encontró la herramienta");
+        //Valida si la herramienta está asignada, si no es así continua el flujo
+        if (!isAssigned) {
+          const response = await getHerramienta(idHerramienta);
+          //Valida si response recibe herramientas
+          if (response.length > 0) {
+            setHerramientasAAsignar([...herramientasAAsignar, response[0]]);
+          } else {
+            /* console.log("no se encontró la herramienta"); */
+            setError("Herramienta no encontrada");
+            document.getElementById("my_modal_1").showModal();
+          }
         }
       }
       code.current.value = "";
@@ -69,35 +101,32 @@ function LectorQr() {
     //Cierre del ciclo
     if (cadena[cadena.length - 1] == "." && paso == 2) {
       let alumnoActual = parseInt(cadena.join(""));
-      console.log(alumno);
-      console.log(alumnoActual);
-
+      /* console.log(alumno);
+      console.log(alumnoActual); */
+      //Verifica si el alumno que cierra el ciclo es el mismo
       if (alumnoActual != alumno) {
-        console.log("alumno distinto");
+        errorAndReset("El alumno ingresado es distinto");
+        /*  console.log("alumno distinto"); */
       } else {
+        // eslint-disable-next-line no-unused-vars
         let response = await postHerramientasAAsignar({
           id_alumno: alumno,
           herramientas: herramientasAAsignar,
         });
-        setPaso(1);
-        setHerramientasAsignadas([]);
-        setHerramientasAAsignar([]);
-        setAlumno(null);
-        console.log(herramientasAsignadas);
-        console.log(herramientasAAsignar);
+        successAndReset("Operacion realizada correctamente");
+        /* console.log("herramientas cargadas"); */
       }
       code.current.value = "";
     }
-    //resetear el input
   }
 
   return (
     /* body */
-    <>
-      <Navbar />
-      <div className="bg-white h-screen w-full p-2">
-        {/* secuence list */}
-        <div className="flex justify-center mb-4">
+    <div className="flex flex-col justify-center items-center bg-white h-screen w-full p-8 ">
+      <ModalMessage text={error || success} error={error ? true : false} />
+      {/* secuence list */}
+
+      {/* <div className="flex justify-center mb-4">
           <ul className="w-1/2 flex justify-center items-center gap-4">
             <li
               className={`p-2 w-1/3 flex flex-col items-center h-12 border-t ${
@@ -139,100 +168,130 @@ function LectorQr() {
               <span className="">Registrar tipo</span>
             </li>
           </ul>
-        </div>
-        {/* input codigo QR */}
-        <div className="flex justify-center">
-          <StyledInput
-            placeholder={"Escanee su código"}
-            type={"password"}
-            TLLabel={"Código"}
-            inputRef={code}
-            onChange={LecturaQr}
-          />
-        </div>
-        {/*  div madre de las table y info alumno */}
-        <div className="flex justify-around gap-2 ">
-          {/* tabla de herramientas a asignar */}
-          <div className="border shadow-md p-2 rounded-lg flex gap-4 flex-col items-center w-1/3">
-            <span className="text-blue-700 text-lg font-semibold  underline decoration-blue-400">
-              Herramientas a asignar
-            </span>
-            <table className="table">
-              <thead className="text-blue-400">
-                <tr>
-                  <td>Marca</td>
-                  <td>Nombre</td>
-                  <td>Nro serie</td>
-                </tr>
-              </thead>
-              <tbody className="text-black font-semibold">
-                {herramientasAAsignar.length > 0
-                  ? herramientasAAsignar.map((herramienta, index) => (
-                      <tr key={index}>
-                        <td>{herramienta.marca}</td>
-                        <td>{herramienta.nombre}</td>
-                        <td>{herramienta.nro_serie}</td>
-                      </tr>
-                    ))
-                  : false}
-              </tbody>
-            </table>
-          </div>
-          {/*info del alumno */}
-          <div className="border shadow-md p-2 rounded-lg flex gap-4 flex-col items-center w-1/3">
-            <p className="text-blue-500 underline decoration-orange-500 font-bold text-2xl">
-              Ingrese su código QR de alumno
+        </div>*/}
+
+      {/* input codigo QR */}
+
+      {/*  <div className="text-black text-2xl border w-full border-cyan-500">
+        <div className="flex justify-center ">
+          {paso == 1 ? (
+            <p className="underline decoration-orange-500">
+              Ingrese su QR de alumno
             </p>
-            <div className="flex flex-col justify-center items-center text-black">
-              <span className="underline text-gray-600 decoration-blue-700">
-                Alumno
-              </span>
-              <span className="italic text-lg">
-                {herramientasAsignadas.length > 0
-                  ? herramientasAsignadas[0].nombre_alumno +
-                    " " +
-                    herramientasAsignadas[0].apellido_alumno
-                  : "Alumno"}
-              </span>
-              <span className="underline text-gray-600 decoration-blue-700">
-                Curso
-              </span>
-              <span className="italic text-lg"></span>
-              <span className="underline text-gray-600 decoration-blue-700">
-                Horario
-              </span>
-              <span className="italic text-lg"></span>
+          ) : paso == 2 ? (
+            <div>
+              <p className="underline decoration-orange-500">
+                Ingrese el QR de la herramienta
+              </p>
             </div>
-          </div>
-          {/* tabla de herramientas asignadas */}
-          <div className="border shadow-md p-2 rounded-lg flex gap-4 flex-col items-center w-1/3">
-            <span className="text-neutral-700 text-lg font-semibold underline decoration-gray-400">
-              Herramientas asignadas
+          ) : (
+            false
+          )}
+        </div>
+      </div> */}
+      {/*  div madre de las table y info alumno */}
+      <div className="flex justify-center items-start gap-2 border rounded-md shadow-sm w-full h-3/4">
+        {/* tabla de herramientas a asignar */}
+        <div className="flex gap-4 flex-col items-center w-1/3">
+          <span className="text-blue-700 text-lg font-semibold  underline decoration-blue-400">
+            Herramientas a asignar
+          </span>
+          <table className="table">
+            <thead className="text-blue-400">
+              <tr>
+                <td>Nombre</td>
+                <td>Marca</td>
+                <td>Nro serie</td>
+              </tr>
+            </thead>
+            <tbody className="text-black font-semibold">
+              {herramientasAAsignar.length > 0
+                ? herramientasAAsignar.map((herramienta, index) => (
+                    <tr key={index}>
+                      <td>{herramienta.marca}</td>
+                      <td>{herramienta.nombre}</td>
+                      <td>{herramienta.nro_serie}</td>
+                    </tr>
+                  ))
+                : false}
+            </tbody>
+          </table>
+        </div>
+        {/*info del alumno */}
+        <div className=" flex flex-col items-center w-1/3 shadow-lg self-center h-3/4 justify-start">
+          <form className="flex justify-center w-full text-black">
+            <StyledInput
+              placeholder={
+                paso == 1
+                  ? "Escanee su código de alumno"
+                  : "Escanee el código de la herramienta"
+              }
+              type={"password"}
+              TLLabel={"Código"}
+              inputRef={code}
+              focus={true}
+              onChange={(e) => LecturaQr(e)}
+            />
+          </form>
+          <div className="flex flex-col justify-center items-center text-black">
+            <span className="underline text-gray-600 decoration-blue-700 ">
+              Alumno
             </span>
-            <table className="table">
-              <thead className="text-blue-400">
-                <tr>
-                  <td>Marca</td>
-                  <td>Nombre</td>
-                  <td>Nro serie</td>
-                </tr>
-              </thead>
-              <tbody className="text-black font-semibold">
-                {herramientasAsignadas.length > 0
-                  ? herramientasAsignadas.map((herramienta, index) => (
-                      <tr key={index}>
-                        <td>{herramienta.marca}</td>
-                        <td>{herramienta.nombre}</td>
-                        <td>{herramienta.nro_serie}</td>
-                      </tr>
-                    ))
-                  : false}
-              </tbody>
-            </table>
+            <span className="italic text-lg">
+              {herramientasAsignadas.length > 0
+                ? herramientasAsignadas[0].nombre_alumno +
+                  " " +
+                  herramientasAsignadas[0].apellido_alumno
+                : "Alumno"}
+            </span>
+            <span className="underline text-gray-600 decoration-blue-700">
+              Curso
+            </span>
+            <span className="italic text-lg">Curso</span>
+            <span className="underline text-gray-600 decoration-blue-700">
+              Horario
+            </span>
+            <span className="italic text-lg">{hora}</span>
           </div>
+          <div className="flex justify-center ">
+            {/* Tutorial secuence */}
+            {herramientasAAsignar.length > 0 ? (
+              <p className="underline decoration-orange-500">
+                Para finalizar el ciclo ingrese su QR de alumno
+              </p>
+            ) : (
+              false
+            )}
+          </div>
+        </div>
+        {/* tabla de herramientas asignadas */}
+        <div className="flex gap-4 flex-col items-center w-1/3 shadow-sm">
+          <span className="text-neutral-700 text-lg font-semibold underline decoration-gray-400">
+            Herramientas asignadas
+          </span>
+          <table className="table">
+            <thead className="text-blue-400">
+              <tr>
+                <td>Nombre</td>
+                <td>Marca</td>
+                <td>Nro serie</td>
+              </tr>
+            </thead>
+            <tbody className="text-black font-semibold">
+              {herramientasAsignadas.length > 0
+                ? herramientasAsignadas.map((herramienta, index) => (
+                    <tr key={index}>
+                      <td>{herramienta.marca}</td>
+                      <td>{herramienta.nombre}</td>
+                      <td>{herramienta.nro_serie}</td>
+                    </tr>
+                  ))
+                : false}
+            </tbody>
+          </table>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

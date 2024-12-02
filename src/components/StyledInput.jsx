@@ -12,6 +12,7 @@ function StyledInput({
   onChange,
   // eslint-disable-next-line react/prop-types
   textColor,
+  focus,
   min,
 }) {
   return (
@@ -21,6 +22,7 @@ function StyledInput({
         <span className={`text-label-alt ${textColor}`}>{TRLabel}</span>
       </div>
       <input
+        autoFocus={focus}
         min={min}
         ref={inputRef}
         type={type}
