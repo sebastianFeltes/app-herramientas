@@ -2,12 +2,13 @@ import StyledInput from "../components/StyledInput";
 import StyledButton from "../components/StyledButton";
 import Navbar from "../components/Navbar";
 import { useEffect, useRef, useState } from "react";
-import { ObtenerDatosHerramienta } from "../services/editar-herramienta.services";
+import { EditarHerramienta, ObtenerDatosHerramienta } from "../services/editar-herramienta.services";
 import ModalMessage from "../components/ModalMessage";
 import {
   getCategorias,
   getEstados,
 } from "../services/alta-herramientas.services";
+import { data } from "autoprefixer";
 // import { putEditHerramienta } from "../services/alta-herramientas.services";
 
 function EditHerramientas() {
@@ -15,7 +16,7 @@ function EditHerramientas() {
   const [categorias, setCategorias] = useState([]);
   const [estados, setEstados] = useState([]);
   const [idDocente, setIdDocente] = useState(null);
-
+  const [idHerramienta,setIdHerramienta] = useState(1); 
   const [error, setError] = useState(undefined);
   const [success, setSuccess] = useState(undefined);
 
@@ -31,27 +32,32 @@ function EditHerramientas() {
 
   async function enviarDatos(e) {
     e.preventDefault();
-
     const herramientaEditada = {
       nombre: nombre.current.value,
       marca: marca.current.value,
-      categoria: parseInt(categoria.current.value),
-      consumible: parseInt(cantidad.current.value),
-      numSerie: numSerie.current.value,
-      fechaCompra: fechaCompra.current.value.split("-").reverse().join("/"),
-      origenHerramienta: origenHerramienta.current.value,
-      estadoHerramienta: parseInt(estadoHerramienta.current.value),
-      fechaCarga: new Date().toLocaleDateString(),
-      horaCarga: new Date().toLocaleTimeString(),
-      vidaUtil: vidaUtil.current.value,
-      idDocente: idDocente,
+      nro_serie: numSerie.current.value,
+      id_categoria: parseInt(categoria.current.value),
+      id_estado: parseInt(estadoHerramienta.current.value),
+      cantidad,
+      fecha_compra: fechaCompra.current.value.split("-").reverse().join("/"),
+      fecha_carga: new Date().toLocaleDateString(),
+      hora_carga: new Date().toLocaleTimeString(),
+      origen_fondo_compra: origenHerramienta.current.value,
+      vida_util: vidaUtil.current.value,
+      id_docente: idDocente,
+      consumible: parseInt(cantidad.current.value)
     };
+    console.log(herramientaEditada);
+    let res = await EditarHerramienta(idHerramienta,herramientaEditada)
+    console.log(res);
+    
   }
 
   //FUNCIÓN QUE OBTIENE LAS CATEGORÍAS DE QUE TENEMOS EN LA DB
   //Y SETEA categorias CON LOS DATOS QUE LLEGAN
   async function obtenerCategorias() {
     const res = await getCategorias();
+    // console.log(res);
     return setCategorias(res);
   }
 
@@ -59,6 +65,7 @@ function EditHerramientas() {
   //Y SETEA estados CON LOS DATOS QUE LLEGAN
   async function obtenerEstados() {
     const res = await getEstados();
+    // console.log(res);
     return setEstados(res);
   }
 
@@ -72,17 +79,21 @@ function EditHerramientas() {
   }, []);
 
   async function traerHerramienta() {
-    let res = await ObtenerDatosHerramienta(1);
-    console.log(res);
+    let data = await ObtenerDatosHerramienta(idHerramienta);
+    let res = await data[0];
+    // console.log(res);
     if (res && res.nombre) {
       nombre.current.value = res.nombre;
       marca.current.value = res.marca;
       categoria.current.value = res.id_categoria;
       cantidad.current.value = res.cantidad;
       numSerie.current.value = res.nro_serie;
-      fechaCompra.current.value = res.fecha_compra.split("-").reverse().join("-");
+      fechaCompra.current.value = res.fecha_compra
+        .split("-")
+        .reverse()
+        .join("-");
       origenHerramienta.current.value = res.origen_fondo;
-      estadoHerramienta.current.value = res.estado_ingreso;
+      estadoHerramienta.current.value = res.id_estado;
       vidaUtil.current.value = res.vida_util;
     } else {
       setError("No se pudo obtener datos de la herramienta");
@@ -133,7 +144,7 @@ function EditHerramientas() {
                   className={`input  input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none 
                   `}
                 >
-                  <option value={undefined}>Seleccione una categoría</option>
+                  <option value={categoria}>Seleccione una categoría</option>
                   {categorias
                     ? categorias.map((categoria, index) => (
                         <option key={index} value={categoria.id_categoria}>
@@ -199,7 +210,9 @@ function EditHerramientas() {
                   ref={estadoHerramienta}
                   className="input input-bordered rounded-full bg-white border focus:border-none ring-1 ring-transparent focus:ring-1 focus:ring-blue-400 focus:outline-none w-full"
                 >
-                  <option value={undefined}>Seleccione un estado</option>
+                  <option value={estadoHerramienta}>
+                    Seleccione un estado
+                  </option>
                   {estados
                     ? estados.map((estado, index) => (
                         <option key={index} value={estado.id_estado}>
