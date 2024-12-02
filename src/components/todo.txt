@@ -1,0 +1,8 @@
+TODO:
+- arreglar el lector => si se escanea una herramienta que y esta en el array para asignar que la saque
+- inventario => edicion de herramienta
+- historial
+- editar la db de produccion para agregar las tablas
+- agregar los estados y los tipos de movimientos => verificar que todos tengan bien las queries!
+- dependiendo del estado hacer que en el inventario aparezcan como disponibles o no (>= 3 no disponible!)
+- agregar un shortcircuit al nav para que sea "U" "A" en el local storage (por las dudas)

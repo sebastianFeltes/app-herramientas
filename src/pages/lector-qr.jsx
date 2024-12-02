@@ -6,6 +6,7 @@ import {
   postHerramientasAAsignar,
   returnHerramienta,
 } from "../services/lector-qr.services";
+import ModalMessage from "../components/ModalMessage";
 
 function LectorQr() {
   const code = useRef();
@@ -14,12 +15,31 @@ function LectorQr() {
   const [herramientasAAsignar, setHerramientasAAsignar] = useState([]);
   const [alumno, setAlumno] = useState(null);
   const [hora, setHora] = useState(null);
-  const [err, setErr] = useState("");
-  const [succes, setSucces] = useState("");
+  const [error, setError] = useState(undefined);
+  const [success, setSuccess] = useState(undefined);
   function getHora() {
     let date = new Date().toLocaleTimeString();
     setHora(date);
   }
+  function errorAndReset(text) {
+    setPaso(1);
+    setHerramientasAsignadas([]);
+    setHerramientasAAsignar([]);
+    setAlumno(null);
+    setError(text);
+    setSuccess(undefined);
+    document.getElementById("my_modal_1").showModal();
+  }
+  function successAndReset(text) {
+    setPaso(1);
+    setHerramientasAsignadas([]);
+    setHerramientasAAsignar([]);
+    setAlumno(null);
+    setSuccess(text);
+    setError(undefined);
+    document.getElementById("my_modal_1").showModal();
+  }
+
   useEffect(() => {
     setInterval(() => {
       getHora();
@@ -56,7 +76,7 @@ function LectorQr() {
           id_alumno: alumno,
           id_herramienta: idHerramienta,
         });
-        console.log(response);
+        /* console.log(response); */
 
         setHerramientasAsignadas(nuevasHerramientasAsignadas);
       } else {
@@ -70,7 +90,9 @@ function LectorQr() {
           if (response.length > 0) {
             setHerramientasAAsignar([...herramientasAAsignar, response[0]]);
           } else {
-            setErr("No se encontró la herramienta")
+            /* console.log("no se encontró la herramienta"); */
+            setError("Herramienta no encontrada");
+            document.getElementById("my_modal_1").showModal();
           }
         }
       }
@@ -79,21 +101,20 @@ function LectorQr() {
     //Cierre del ciclo
     if (cadena[cadena.length - 1] == "." && paso == 2) {
       let alumnoActual = parseInt(cadena.join(""));
-      console.log(alumno);
-      console.log(alumnoActual);
+      /* console.log(alumno);
+      console.log(alumnoActual); */
       //Verifica si el alumno que cierra el ciclo es el mismo
       if (alumnoActual != alumno) {
-        setErr("Alumno distinto")
+        errorAndReset("El alumno ingresado es distinto");
+        /*  console.log("alumno distinto"); */
       } else {
         // eslint-disable-next-line no-unused-vars
         let response = await postHerramientasAAsignar({
           id_alumno: alumno,
           herramientas: herramientasAAsignar,
         });
-        setPaso(1);
-        setHerramientasAsignadas([]);
-        setHerramientasAAsignar([]);
-        setAlumno(null);
+        successAndReset("Operacion realizada correctamente");
+        /* console.log("herramientas cargadas"); */
       }
       code.current.value = "";
     }
@@ -102,6 +123,7 @@ function LectorQr() {
   return (
     /* body */
     <div className="flex flex-col justify-center items-center bg-white h-screen w-full p-8 ">
+      <ModalMessage text={error || success} error={error ? true : false} />
       {/* secuence list */}
 
       {/* <div className="flex justify-center mb-4">
@@ -232,6 +254,7 @@ function LectorQr() {
             <span className="italic text-lg">{hora}</span>
           </div>
           <div className="flex justify-center ">
+            {/* Tutorial secuence */}
             {herramientasAAsignar.length > 0 ? (
               <p className="underline decoration-orange-500">
                 Para finalizar el ciclo ingrese su QR de alumno

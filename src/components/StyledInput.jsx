@@ -43,7 +43,7 @@ StyledInput.propTypes = {
   TRLabel: PropTypes.string,
   BLLabel: PropTypes.string,
   BRLabel: PropTypes.string,
-  inputRef: PropTypes.object,
+  inputRef: PropTypes.object
 };
 
 export default StyledInput;
