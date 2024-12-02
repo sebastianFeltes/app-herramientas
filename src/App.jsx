@@ -7,6 +7,7 @@ import HistorialHerramientas from "./pages/historial-herramientas";
 import AltaHerramientas from "./pages/alta-herramientas";
 import LectorQr from "./pages/lector-qr";
 import Home from "./pages/home";
+import EditHerramientas from "./pages/editar-herramientas";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route path="/inventario" element={<Inventario />} />
         <Route path="/lector-qr" element={<LectorQr />} />
         <Route path="/historial-herramientas" element={<HistorialHerramientas />} />
+        <Route path="/editar-herramientas" element={<EditHerramientas />} />
+        
       </Routes>
     </BrowserRouter>
   );
